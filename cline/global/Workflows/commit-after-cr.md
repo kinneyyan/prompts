@@ -182,14 +182,10 @@ _This section is executed only if the user chose "Proceed to commit"._
     <question>
     Based on the changes, I've generated the following commit message:
 
-    ```
-
     feat(auth): implement user login functionality
 
     - Added new login component
     - Integrated with authentication API
-
-    ```
 
     Do you approve this commit message?
     </question>
