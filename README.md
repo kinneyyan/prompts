@@ -10,17 +10,21 @@ Store some Claude Code and Cline configurations, prompts and best practices.
 ├── README.md
 ├── claude-code
 │   ├── .claude
-│   │   └── commands # 自定义斜杠命令（Slash Commands）
+│   │   └── commands # 自定义斜杠命令（Slash Commands）。部分取自 https://github.com/brennercruvinel/CCPlugins/tree/main/commands
 │   │       ├── cleanproject.md
-│   │       ├── commit.md # 代码审查通过后提交代码并生成 commit message
+│   │       ├── commit-after-cr-lite # 代码审查通过后提交代码并生成 commit message (no report)
+│   │       ├── commit.md
 │   │       ├── explain-like-senior.md
 │   │       ├── find-todos.md
 │   │       ├── make-it-pretty.md
 │   │       ├── refactor.md
 │   │       ├── remove-comments.md
 │   │       └── understand.md
-│   └── project-memory-for-ice3
-│       └── CLAUDE.md # 适用于 ice3 项目的 Claude Code 项目内存
+│   └── project-memory-for-ice3 # 适用于 ice3 项目的 Claude Code 项目内存
+│       ├── child-app # ice3 子应用/独立应用
+│       │   └── CLAUDE.md
+│       └── framework-app # ice3 主应用
+│           └── CLAUDE.md
 ├── cline
 │   ├── global
 │   │   ├── Rules # Cline 全局 Rules
@@ -38,6 +42,13 @@ Store some Claude Code and Cline configurations, prompts and best practices.
     ├── code-spec.md # 代码规约
     └── testing-spec.md # 单元测试编写规范 (EARS 格式)
 ```
+
+## TODO LIST
+
+- [x] 添加类似 `cline/global/Workflows/commit-after-cr.md` claude code 的斜杠命令（no report） - _Completed on 2025-09-15 `claude-code/.claude/commands/commit-after-cr-lite.md`_
+- [ ] 添加类似 `cline/global/Workflows/commit-after-cr.md` claude code 的斜杠命令（with report）
+- [ ] 添加类似 `cline/global/Workflows/create-unit-test.md` claude code 的斜杠命令（no report）
+- [ ] 添加类似 `cline/global/Workflows/create-unit-test.md` claude code 的斜杠命令（with report）
 
 ## 参考链接
 

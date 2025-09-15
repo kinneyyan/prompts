@@ -1,12 +1,13 @@
-# Smart Git Commit
+# Git Commit After Code Review
 
-I'll analyze your changes and create a meaningful commit message.
+I'll analyze your changes and perform a code review. If the review passes, I will create a meaningful commit message.
 
 **Pre-Commit Quality Checks:**
 Before committing, I'll verify:
 
 - Linter passes (if lint command exists)
 - No obvious errors in changed files
+- Code review passes (using project architecture & spec references)
 
 First, let me check if this is a git repository and what's changed:
 
@@ -55,7 +56,37 @@ fi
 git diff --cached --name-status
 ```
 
-Based on the analysis, I'll create a conventional commit message:
+Based on the analysis, I'll perform a code review:
+
+1. Understand the architecture from @memory-bank/project-brief.md and @README.md
+2. Understand the coding conventions from @memory-bank/code-spec.md
+3. Execute code review using 3-tier severity system:
+
+#### 🚨 CRITICAL (Must fix)
+
+- Configuration changes risking outages
+- Security vulnerabilities
+- Data loss risks
+- Breaking changes
+
+#### ⚠️ HIGH PRIORITY (Should fix)
+
+- Performance degradation risks
+- Maintainability issues
+- Missing error handling
+
+#### 💡 SUGGESTIONS (Consider)
+
+- Code style improvements
+- Optimization opportunities
+- Additional test coverage
+
+Then determine if the code review passes based on the following conditions:
+
+- **Review Passed**: If no `CRITICAL` issues are found.
+- **Review Failed**: If any `CRITICAL` issues are detected.
+
+If **Review Passed**, I'll create a conventional commit message:
 
 - **Type**: feat|fix|docs|style|refactor|test|chore
 - **Scope**: component or area affected (optional)
