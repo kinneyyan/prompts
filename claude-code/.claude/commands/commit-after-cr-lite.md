@@ -5,7 +5,6 @@ I'll analyze your changes and perform a code review. If the review passes, I wil
 **Pre-Commit Quality Checks:**
 Before committing, I'll verify:
 
-- Linter passes (if lint command exists)
 - No obvious errors in changed files
 - Code review passes (using project architecture & spec references)
 
