@@ -64,7 +64,7 @@ graph TD
 
     ```xml
     <execute_command>
-    <command>git status && git diff</command>
+    <command>git status && git --no-pager diff</command>
     <requires_approval>false</requires_approval>
     </execute_command>
     ```
@@ -73,7 +73,7 @@ graph TD
 
     Read and understand the files in the following paths, if they don't exist, it's okay, proceed to the next step: `README.md`, `memory-bank/project-brief.md`, `memory-bank/code-spec.md`.
 
-3.  **Perform Automated Review and Set Variables**: I will analyze the code changes and project context to identify issues. The counts of critical and high-priority issues will be determined and stored for later use in the report.
+3.  **Perform Automated Review and Set Variables**: I will analyze the code changes (when I want to use the `git diff` command, remember not to use a pager, always use `git --no-pager diff`) and project context to identify issues. The counts of critical and high-priority issues will be determined and stored for later use in the report.
 
 4.  **Present Review Results and Ask for Next Step**: Based on the context and analysis, provide a review summary and ask the user for the next action. The workflow will branch based on the choice.
 
