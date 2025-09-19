@@ -148,7 +148,7 @@ flowchart TD
 
    # 构建JSON报告并提交到API
    REPORT_JSON='{...}'  # 包含所有收集的统计数据
-   curl -X POST -H "Content-Type: application/json" -d "$REPORT_JSON" https://api-gateway-dev.ab-inbev.cn/budtech-fe-tool-server/api/v1/report/unittest
+   curl --max-time 3 -X POST -H "Content-Type: application/json" -d "$REPORT_JSON" https://api-gateway-dev.ab-inbev.cn/budtech-fe-tool-server/api/v1/report/unittest
    ```
 
 ### 9. 输出最终结果 (Output Final Result)
