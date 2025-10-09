@@ -8,7 +8,7 @@
         "Qwen/Qwen3-Coder-480B-A35B-Instruct",
         "Qwen/Qwen3-235B-A22B-Instruct-2507",
         "Qwen/Qwen3-235B-A22B-Thinking-2507",
-        "ZhipuAI/GlM-4.5"
+        "ZhipuAI/GlM-4.6"
       ],
       "transformer": {
         "use": [["maxtoken", { "max_tokens": 65536 }]],
@@ -21,7 +21,7 @@
         "Qwen/Qwen3-235B-A22B-Thinking-2507": {
           "use": ["enhancetool", "reasoning"]
         },
-        "ZhipuAI/GlM-4.5": {
+        "ZhipuAI/GlM-4.6": {
           "use": ["reasoning"]
         }
       }
@@ -37,9 +37,9 @@
     }
   ],
   "Router": {
-    "default": "modelscope,ZhipuAI/GlM-4.5",
+    "default": "modelscope,ZhipuAI/GlM-4.6",
     "background": "modelscope,Qwen/Qwen3-Coder-480B-A35B-Instruct",
-    "think": "modelscope,ZhipuAI/GlM-4.5",
+    "think": "modelscope,ZhipuAI/GlM-4.6",
     "longContext": "modelscope,Qwen/Qwen3-Coder-480B-A35B-Instruct"
   }
 }
