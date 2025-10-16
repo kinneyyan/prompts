@@ -5,16 +5,13 @@
       "api_base_url": "https://api-inference.modelscope.cn/v1/chat/completions",
       "api_key": "sk-xxx",
       "models": [
-        "Qwen/Qwen3-Coder-480B-A35B-Instruct",
         "Qwen/Qwen3-235B-A22B-Instruct-2507",
         "Qwen/Qwen3-235B-A22B-Thinking-2507",
-        "ZhipuAI/GlM-4.6"
+        "ZhipuAI/GlM-4.6",
+        "deepseek-ai/DeepSeek-V3.1"
       ],
       "transformer": {
         "use": [["maxtoken", { "max_tokens": 65536 }]],
-        "Qwen/Qwen3-Coder-480B-A35B-Instruct": {
-          "use": ["enhancetool"]
-        },
         "Qwen/Qwen3-235B-A22B-Instruct-2507": {
           "use": ["enhancetool"]
         },
@@ -38,8 +35,9 @@
   ],
   "Router": {
     "default": "modelscope,ZhipuAI/GlM-4.6",
-    "background": "modelscope,Qwen/Qwen3-Coder-480B-A35B-Instruct",
+    "background": "modelscope,deepseek-ai/DeepSeek-V3.1",
     "think": "modelscope,ZhipuAI/GlM-4.6",
-    "longContext": "modelscope,Qwen/Qwen3-Coder-480B-A35B-Instruct"
+    "longContext": "modelscope,Qwen/Qwen3-235B-A22B-Thinking-2507",
+    "webSearch": "gemini,gemini-2.5-flash"
   }
 }
