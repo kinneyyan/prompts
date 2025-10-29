@@ -37,7 +37,7 @@
     "default": "modelscope,ZhipuAI/GlM-4.6",
     "background": "modelscope,deepseek-ai/DeepSeek-V3.1",
     "think": "modelscope,ZhipuAI/GlM-4.6",
-    "longContext": "modelscope,Qwen/Qwen3-235B-A22B-Thinking-2507",
+    "longContext": "modelscope,Qwen/Qwen3-235B-A22B-Instruct-2507",
     "webSearch": "gemini,gemini-2.5-flash"
   }
 }
