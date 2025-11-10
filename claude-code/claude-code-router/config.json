@@ -5,18 +5,18 @@
       "api_base_url": "https://api-inference.modelscope.cn/v1/chat/completions",
       "api_key": "sk-xxx",
       "models": [
-        "Qwen/Qwen3-235B-A22B-Instruct-2507",
-        "Qwen/Qwen3-235B-A22B-Thinking-2507",
+        "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+        "Qwen/Qwen3-Coder-480B-A35B-Instruct",
         "ZhipuAI/GlM-4.6",
         "deepseek-ai/DeepSeek-V3.1"
       ],
       "transformer": {
         "use": [["maxtoken", { "max_tokens": 65536 }]],
-        "Qwen/Qwen3-235B-A22B-Instruct-2507": {
+        "Qwen/Qwen3-Coder-30B-A3B-Instruct": {
           "use": ["enhancetool"]
         },
-        "Qwen/Qwen3-235B-A22B-Thinking-2507": {
-          "use": ["enhancetool", "reasoning"]
+        "Qwen/Qwen3-Coder-480B-A35B-Instruct": {
+          "use": ["enhancetool"]
         },
         "ZhipuAI/GlM-4.6": {
           "use": ["reasoning"]
@@ -35,9 +35,9 @@
   ],
   "Router": {
     "default": "modelscope,ZhipuAI/GlM-4.6",
-    "background": "modelscope,deepseek-ai/DeepSeek-V3.1",
+    "background": "modelscope,Qwen/Qwen3-Coder-30B-A3B-Instruct",
     "think": "modelscope,ZhipuAI/GlM-4.6",
-    "longContext": "modelscope,Qwen/Qwen3-235B-A22B-Instruct-2507",
+    "longContext": "modelscope,Qwen/Qwen3-Coder-480B-A35B-Instruct",
     "webSearch": "gemini,gemini-2.5-flash"
   }
 }
