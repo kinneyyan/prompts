@@ -8,30 +8,39 @@ Store some Claude Code and Cline configurations, prompts and best practices.
 ```bash
 .
 ├── README.md
-├── claude-code
+├── claude-code # Claude Code 相关
 │   ├── .claude
-│   │   └── commands # 自定义斜杠命令（Slash Commands）。部分取自 https://github.com/brennercruvinel/CCPlugins/tree/main/commands
-│   │       ├── cleanproject.md
-│   │       ├── commit-after-cr-lite.md # 代码审查通过后提交代码并生成 commit message (no report)
-│   │       ├── commit-after-cr.md # 代码审查通过后提交代码并生成 commit message (with report)
-│   │       ├── commit.md
-│   │       ├── create-unit-test-lite.md # 生成单测(配合 `memory-bank/testing-spec.md`)(no report)
-│   │       ├── create-unit-test.md # 生成单测(配合 `memory-bank/testing-spec.md`)(with report)
-│   │       ├── explain-like-senior.md
-│   │       ├── find-todos.md
-│   │       ├── make-it-pretty.md
-│   │       ├── refactor.md
-│   │       ├── remove-comments.md
-│   │       └── understand.md
+│   │   ├── agents # 子代理
+│   │   │   ├── code-reviewer.md
+│   │   │   ├── frontend-developer.md
+│   │   │   └── prompt-engineer.md
+│   │   ├── commands # 斜杠命令。部分取自 https://github.com/brennercruvinel/CCPlugins/tree/main/commands
+│   │   │   ├── cleanproject.md
+│   │   │   ├── commit-after-cr-lite.md # 代码审查通过后提交代码并生成 commit message (no report)
+│   │   │   ├── commit-after-cr.md # 代码审查通过后提交代码并生成 commit message (with report)
+│   │   │   ├── commit.md
+│   │   │   ├── create-unit-test-lite.md # 生成单测(配合 `memory-bank/testing-spec.md`)(no report)
+│   │   │   ├── create-unit-test.md # 生成单测(配合 `memory-bank/testing-spec.md`)(with report)
+│   │   │   ├── explain-like-senior.md
+│   │   │   ├── find-todos.md
+│   │   │   ├── make-it-pretty.md
+│   │   │   ├── refactor.md
+│   │   │   ├── remove-comments.md
+│   │   │   └── understand.md
+│   │   ├── hooks # 配合 Hooks 使用的脚本
+│   │   │   └── formatter.sh
+│   │   └── settings.json # Claude Code 个人配置
 │   ├── claude-code-router
-│   │   └── config.json # ccr 个人推荐配置
+│   │   └── config.json # CCR 个人推荐配置
 │   └── project-memory-for-ice3 # 适用于 ice3 项目的 Claude Code 项目内存
 │       ├── child-app # ice3 子应用/独立应用
 │       │   └── CLAUDE.md
 │       └── framework-app # ice3 主应用
 │           └── CLAUDE.md
-├── cline
+├── cline # Cline 相关
 │   ├── global
+│   │   ├── Hooks # Cline 全局 Hooks
+│   │   │   └── PostToolUse
 │   │   ├── Rules # Cline 全局 Rules
 │   │   │   └── baby-steps.md
 │   │   └── Workflows # Cline 全局 Workflows
@@ -47,13 +56,6 @@ Store some Claude Code and Cline configurations, prompts and best practices.
     ├── code-spec.md # 代码规约
     └── testing-spec.md # 单元测试编写规范 (EARS 格式)
 ```
-
-## TODO LIST
-
-- [x] 添加类似 `cline/global/Workflows/commit-after-cr.md` claude code 的斜杠命令（no report） --- _Completed on 2025-09-15, see `claude-code/.claude/commands/commit-after-cr-lite.md`_
-- [x] 添加类似 `cline/global/Workflows/commit-after-cr.md` claude code 的斜杠命令（with report） --- _Completed on 2025-09-16, see `claude-code/.claude/commands/commit-after-cr.md`_
-- [x] 添加类似 `cline/global/Workflows/create-unit-test.md` claude code 的斜杠命令（no report） --- _Completed on 2025-09-18, see `claude-code/.claude/commands/create-unit-test-lite.md`_
-- [x] 添加类似 `cline/global/Workflows/create-unit-test.md` claude code 的斜杠命令（with report） --- _Completed on 2025-09-18, see `claude-code/.claude/commands/create-unit-test.md`_
 
 ## 参考链接
 

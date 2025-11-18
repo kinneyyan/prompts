@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": ["Bash(git add:*)", "Bash(git commit:*)"],
+    "deny": [],
+    "ask": []
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/formatter.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "npx -y @owloops/claude-powerline@latest --style=powerline"
+  },
+  "enabledPlugins": {
+    "frontend-mobile-development@claude-code-workflows": true,
+    "frontend-mobile-security@claude-code-workflows": true,
+    "javascript-typescript@claude-code-workflows": true,
+    "shell-scripting@claude-code-workflows": true
+  },
+  "alwaysThinkingEnabled": false
+}

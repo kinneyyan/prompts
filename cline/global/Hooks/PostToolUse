@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+input=$(cat)
+
+workspace_root=$(echo "$input" | jq -r '.workspaceRoots[0]')
+tool_name=$(echo "$input" | jq -r '.postToolUse.toolName')
+
+if [ "$tool_name" = "write_to_file" ] || [ "$tool_name" = "replace_in_file" ]; then
+    file_path=$(echo "$input" | jq -r '.postToolUse.parameters.path')
+    # echo "Tool: $tool_name"
+    echo "Path: $file_path"
+    # 检查 file_path 是否有值，并且是 .js, .jsx, .ts, .tsx, .css, .scss, .less 文件
+    if [ -n "$file_path" ] && [ "$file_path" != "null" ]; then
+        if [[ "$file_path" =~ \.(js|jsx|ts|tsx|css|scss|less)$ ]]; then
+            cd $workspace_root
+            if command -v prettier &> /dev/null || [ -f "node_modules/.bin/prettier" ]; then
+                echo "npx prettier --write $file_path"
+                # result=$(npx eslint "$file_path" --fix --quiet)
+                result=$(npx prettier --write $file_path)
+                if [ $? -eq 0 ]; then
+                  echo "✅ success"
+                else
+                  echo "❌ failed" >&2
+                fi
+            else
+                echo "🦉 prettier not found, skipped"
+            fi
+        else
+            echo "🦉 unsupported file type, skipped"
+        fi
+    fi
+fi
