@@ -145,8 +145,8 @@ Uses ice.js store with model pattern:
 
 ## Coding Standards
 
-For detailed coding standards, please refer to the @memory-bank/code-spec.md
+For detailed coding standards, please refer to the @./memory-bank/code-spec.md
 
 ## Unit Testing Guidelines
 
-For detailed unit testing guidelines, please refer to the @memory-bank/testing-spec.md.
+For detailed unit testing guidelines, please refer to the @./memory-bank/testing-spec.md.
