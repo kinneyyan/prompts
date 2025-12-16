@@ -47,6 +47,8 @@ Store some Claude Code and Cline configurations, prompts and best practices.
 │   │       ├── commit-after-cr.md # 代码审查通过后提交代码并生成 commit message
 │   │       ├── create-unit-test.md # 生成单测（配合 `memory-bank/testing-spec.md`）
 │   │       ├── daily-summary.md
+│   │       ├── gen-pages-doc.md
+│   │       ├── gen-pages-menus-overview.md
 │   │       └── spec.md
 │   └── workspace
 │       ├── Rules # Cline 项目级别 Rules
