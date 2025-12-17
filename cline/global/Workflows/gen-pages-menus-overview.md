@@ -10,7 +10,7 @@
 
 ## 1. 扫描页面文件
 
-1. 使用 `execute_command` 工具执行 `@bud-fe/docs-gen-cli` 这个包提供的 node 脚本，此脚本会扫描指定目录下的所有 `.tsx` 文件，解析文件顶部约定的注释内容并在指定目录下生成文档：
+1. 使用 `execute_command` 工具执行 `@bud-fe/docs-gen-cli` 这个包提供的 node 脚本，此脚本会扫描指定目录下的所有 `.tsx` 文件，解析文件顶部约定的注释内容并在指定目录下生成 Markdown 文档：
 
    ```xml
    <execute_command>

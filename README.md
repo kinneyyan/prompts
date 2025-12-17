@@ -23,6 +23,8 @@ Store some Claude Code and Cline configurations, prompts and best practices.
 │   │   │   ├── create-unit-test.md # 生成单测(配合 `memory-bank/testing-spec.md`)(with report)
 │   │   │   ├── explain-like-senior.md
 │   │   │   ├── find-todos.md
+│   │   │   ├── gen-pages-doc.md
+│   │   │   ├── gen-pages-menus-overview.md
 │   │   │   ├── make-it-pretty.md
 │   │   │   ├── refactor.md
 │   │   │   ├── remove-comments.md
