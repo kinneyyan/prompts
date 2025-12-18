@@ -1,30 +1,34 @@
 <task name="Git Commit After Code Review">
 
 <task_objective>
-This workflow analyzes your changes, runs pre-commit quality checks, and then follows a conditional path. If the user chooses not to commit, a review report is sent immediately. If the user chooses to commit, the report is sent only after all commit operations are successfully completed.
+This workflow analyzes your changes, runs pre-commit quality checks, updates the project's memory bank, and then follows a conditional path. If the user chooses not to commit, a review report is sent immediately. If the user chooses to commit, the report is sent only after all commit operations are successfully completed.
 </task_objective>
 
 <detailed_sequence_steps>
 
 # Git Commit After Code Review Process - Detailed Sequence of Steps
 
-## 0. Workflow Overview
+## 0. Workflow Overview Diagram
 
 ```mermaid
 graph TD
-    A[开始: Pre-Commit Verification] --> B[Code Review and Analysis];
-    B --> C{用户选择: 下一步操作?};
-    C -- 选择: 不执行commit --> D[生成并上报审查报告];
-    D --> E[工作流结束];
-    C -- 选择: 直接执行commit --> F[Stage Modified Files];
-    F --> G[生成/确认 Commit Message];
-    G --> H[执行 git commit];
-    H --> I[生成并上报审查报告];
-    I --> J[工作流结束];
+    A[Pre-Commit Verification] --> B[Code Review and Analysis];
+    B --> C[Generate Review Report & Data Summary];
+    C --> D{Present Findings & Request Decision?};
+    D -- Choose: Do not commit --> G[Post Metrics];
+    D -- Choose: Commit --> E[Path: Stage and Commit];
+    subgraph E
+        direction LR
+        E1{Approve Commit Msg?};
+        E1 -- "Yes, and update" --> E2[Update Memory Bank];
+        E2 --> E2_1[Stage Memory Files];
+        E2_1 --> E3[Execute Commit];
+        E1 -- "Yes" --> E3;
+    end
+    E --> G;
+    G --> H[Complete Workflow];
 
-    style C fill:#f9f,stroke:#333,stroke-width:2px
-    style D fill:#bbf,stroke:#333,stroke-width:1px
-    style I fill:#bbf,stroke:#333,stroke-width:1px
+    style D fill:#f9f,stroke:#333,stroke-width:2px
 ```
 
 ## 1. Pre-Commit Verification
@@ -69,13 +73,77 @@ graph TD
     </execute_command>
     ```
 
-2.  **Reference Project Context**: Read README.md and memory bank files for context.
+2.  **Reference Project Context**: Read README.md and memory bank files for context:
 
     Read and understand the files in the following paths, if they don't exist, it's okay, proceed to the next step: `README.md`, `memory-bank/project-brief.md`, `memory-bank/code-spec.md`.
 
-3.  **Perform Automated Review and Set Variables**: I will analyze the code changes (when I want to use the `git diff` command, remember not to use a pager, always use `git --no-pager diff`) and project context to identify issues. The counts of critical and high-priority issues will be determined and stored for later use in the report.
+3.  **Perform Code Review and Set Variables**: I will analyze the code changes (when I want to use the `git diff` command, remember not to use a pager, always use `git --no-pager diff`) and project context to identify issues. The counts of critical and high-priority issues will be determined and stored for later use in the report.
 
-4.  **Present Review Results and Ask for Next Step**: Based on the context and analysis, provide a review summary and ask the user for the next action. The workflow will branch based on the choice.
+## 3. Generate Review Report & Data Summary
+
+1.  **Collect All Data**: Generate a changeset summary and collect all statistics and metadata required for subsequent steps.
+
+    ```xml
+    <execute_command>
+    <command>
+    bash << 'EOF'
+    # Part 1: Placeholder for changeset summary
+    CHANGESET_SUMMARY="Reviewed and analyzed code changes for commit."
+
+    # Part 2: Get branch and submitter info
+    CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+    SUBMITTER=$(git config user.name)
+
+    # Part 3: Get file and line change statistics
+    # Use awk to sum up staged and unstaged changes
+    read -r tracked_files tracked_additions tracked_deletions <<_EOF_
+    $( (git diff --numstat 2>/dev/null; git diff --cached --numstat 2>/dev/null) | awk '
+    { files += 1; additions += $1; deletions += $2 }
+    END { print files+0, additions+0, deletions+0 }
+    ')
+    _EOF_
+
+    # Handle untracked files
+    untracked_files_list=$(git ls-files --others --exclude-standard)
+    untracked_count=0
+    untracked_lines=0
+    if [ -n "$untracked_files_list" ]; then
+      untracked_count=$(echo "$untracked_files_list" | wc -l)
+      # Sum lines of all untracked files. Handle case with no files.
+      untracked_lines=$(echo "$untracked_files_list" | xargs wc -l 2>/dev/null | tail -n 1 | awk '{print $1}' || echo 0)
+    fi
+
+    # Calculate final totals
+    TOTAL_FILES_CHANGED=$((tracked_files + untracked_count))
+    TOTAL_LINES_ADDED=$((tracked_additions + untracked_lines))
+    TOTAL_LINES_DELETED=$((tracked_deletions))
+
+    # Part 4: Ensure CR variables are set (determined by the agent in step 2.3)
+    CRITICAL_ISSUES_COUNT=${CRITICAL_ISSUES_COUNT:-0}
+    HIGH_PRIORITY_ISSUES_COUNT=${HIGH_PRIORITY_ISSUES_COUNT:-0}
+
+    # Part 5: Write all collected variables to the temp file at once, overwriting previous content.
+    cat > /tmp/git_stats.sh <<INNER_EOF
+
+    CHANGESET_SUMMARY='${CHANGESET_SUMMARY}'
+    CURRENT_BRANCH='${CURRENT_BRANCH}'
+    SUBMITTER='${SUBMITTER}'
+    FILES_CHANGED=${TOTAL_FILES_CHANGED}
+    LINES_ADDED=${TOTAL_LINES_ADDED}
+    LINES_DELETED=${TOTAL_LINES_DELETED}
+    CRITICAL_ISSUES_COUNT=${CRITICAL_ISSUES_COUNT}
+    HIGH_PRIORITY_ISSUES_COUNT=${HIGH_PRIORITY_ISSUES_COUNT}
+    INNER_EOF
+
+    echo "All variables collected and stored in /tmp/git_stats.sh"
+    cat /tmp/git_stats.sh
+    EOF
+    </command>
+    <requires_approval>false</requires_approval>
+    </execute_command>
+    ```
+
+## 4. Present Findings & Request Decision
 
     ```xml
     <ask_followup_question>
@@ -97,59 +165,17 @@ graph TD
     </ask_followup_question>
     ```
 
-## 3. Path: Do Not Commit (Prepare for Report)
+## 5. Execute Subsequent Paths
 
-_This section is executed only if the user chose "Do not commit, I will fix the issues"._
+_This section contains the branching logic for user's decision._
 
-1.  **Get the number of changed files and lines (include untracked files)**
+### 5.1 Path: Do Not Commit (No Commit Action)
 
-    ```xml
-    <execute_command>
-    <command>
-    bash << 'EOF'
-    quick_git_stats() {
-        # 综合统计所有变更
-        {
-            # 已追踪文件的变更
-            git diff --numstat 2>/dev/null
-            # 已暂存文件的变更
-            git diff --cached --numstat 2>/dev/null
-        } | awk '
-        {
-            if (NF >= 2) {
-                additions += $1
-                deletions += $2
-                files++
-            }
-        }
-        END {
-            print "FILES_CHANGED=" files+0
-            print "LINES_ADDED=" additions+0
-            print "LINES_DELETED=" deletions+0
-        }' > /tmp/git_stats.sh
+_This section is executed if the user chose "Do not commit, I will fix the issues". Stat collection is centralized in step 3._
 
-        # 执行临时文件中的变量赋值
-        source /tmp/git_stats.sh
-        rm -f /tmp/git_stats.sh
+### 5.2 Path: Stage and Commit
 
-        # 单独处理未追踪文件
-        untracked_count=$(git ls-files --others --exclude-standard | wc -l)
-        untracked_lines=$(git ls-files --others --exclude-standard | xargs wc -l 2>/dev/null | tail -1 | awk '{print $1}' || echo 0)
-
-        # 更新最终统计
-        FILES_CHANGED=$((FILES_CHANGED + untracked_count))
-        LINES_ADDED=$((LINES_ADDED + untracked_lines))
-    }
-    quick_git_stats
-    EOF
-    </command>
-    <requires_approval>false</requires_approval>
-    </execute_command>
-    ```
-
-## 4. Path: Stage and Commit
-
-_This section is executed only if the user chose "Proceed to commit"._
+_This section is executed if the user chose "Proceed to commit"._
 
 1.  **Stage All Files**: If nothing is staged, stage all changes including new files.
 
@@ -168,14 +194,7 @@ _This section is executed only if the user chose "Proceed to commit"._
 
 2.  **Generate and Present Commit Message for Approval**:
 
-    Based on the analysis, I'll create a conventional commit message:
-
-    - **Type**: feat|fix|docs|style|refactor|test|chore
-    - **Scope**: component or area affected (optional)
-    - **Subject**: clear description in present tense
-    - **Body**: why the change was made (if needed)
-
-    Example: `git commit -m "fix(auth): resolve login timeout issue"`
+    Based on the analysis, I'll create a conventional commit message. I will then ask for your approval and give you the option to update the memory bank at the same time.
 
     ```xml
     <ask_followup_question>
@@ -189,94 +208,126 @@ _This section is executed only if the user chose "Proceed to commit"._
 
     Do you approve this commit message?
     </question>
-    <options>["Yes, commit with this message", "No, I will write it myself"]</options>
+    <options>["Yes, commit with this message", "Yes, commit with this message after updating memory bank", "No, I will write it myself"]</options>
     </ask_followup_question>
     ```
 
-3.  **Execute Commit**: If approved, run the `git commit` command.
+3.  **Execute Conditional Commit**: Based on your choice, I will proceed.
 
-    ```xml
-    <execute_command>
-    <command>git commit -m "feat(auth): implement user login functionality" -m "- Added new login component" -m "- Integrated with authentication API"</command>
-    <requires_approval>false</requires_approval>
-    </execute_command>
-    ```
+    - **If you chose "Yes, commit with this message after updating memory bank"**:
 
-4.  **Get the number of files and lines changed in the last commit**
+      1.  **Update Memory Bank**: I will update the memory bank first.
 
-    ```xml
-    <execute_command>
-    <command>
-    bash << 'EOF'
-    LAST_COMMIT_STATS=$(git diff-tree --shortstat HEAD~1 HEAD 2>/dev/null)
-    FILES_CHANGED=$(echo "$LAST_COMMIT_STATS" | grep -o '[0-9]* files\?' | grep -o '[0-9]*')
-    LINES_ADDED=$(echo "$LAST_COMMIT_STATS" | grep -o '[0-9]* insertions\?' | grep -o '[0-9]*')
-    LINES_DELETED=$(echo "$LAST_COMMIT_STATS" | grep -o '[0-9]* deletions\?' | grep -o '[0-9]*')
-    FILES_CHANGED=${FILES_CHANGED:-0}
-    LINES_ADDED=${LINES_ADDED:-0}
-    LINES_DELETED=${LINES_DELETED:-0}
-    EOF
-    </command>
-    <requires_approval>false</requires_approval>
-    </execute_command>
-    ```
+          1. Check if `./memory-bank/active-context.md` and `./memory-bank/changelog.md` exist. If they do not exist, skip the following sub-steps.
+          2. First, ensure I understand the definitions of the `./memory-bank/active-context.md` and `./memory-bank/changelog.md` files. If unclear, read `.clinerules/memory-bank.md`.
+          3. Based on the context information, update the summary of code changes (`$CHANGESET_SUMMARY`) to `./memory-bank/active-context.md` and `./memory-bank/changelog.md`. Additionally, attach the information of the code review report after updating the entry in `./memory-bank/active-context.md`, in a Markdown code block format, as shown in the example below:
 
-## 5. Collect Information and Post Report
+             ````markdown
+             - **2025-12-18**: Implement user login functionality
+
+               ```yaml
+               codeReviewSummary: <Summarize the results of this code review>
+               branch: $CURRENT_BRANCH
+               submitter: $SUBMITTER
+               filesChanged: $FILES_CHANGED
+               linesAdded: $LINES_ADDED
+               linesDeleted: $LINES_DELETED
+               criticalIssues: $CRITICAL_ISSUES_COUNT
+               highPriorityIssues: $HIGH_PRIORITY_ISSUES_COUNT
+               ```
+             ````
+
+      2.  **Stage Updated Memory Bank Files**: To ensure the memory bank updates are included in this commit, I will explicitly add them to the staging area.
+          ```xml
+          <execute_command>
+          <command>
+          git add ./memory-bank/active-context.md ./memory-bank/changelog.md
+          echo "Staged updated memory bank files."
+          </command>
+          <requires_approval>false</requires_approval>
+          </execute_command>
+          ```
+      3.  **Execute Commit**: Now, I will run the `git commit` command, which includes all changes.
+          ```xml
+          <execute_command>
+          <command>git commit -m "feat(auth): implement user login functionality" -m "- Added new login component" -m "- Integrated with authentication API"</command>
+          <requires_approval>false</requires_approval>
+          </execute_command>
+          ```
+
+    - **If you chose "Yes, commit with this message"**:
+      1.  **Execute Commit**: I will run the `git commit` command directly.
+          ```xml
+          <execute_command>
+          <command>git commit -m "feat(auth): implement user login functionality" -m "- Added new login component" -m "- Integrated with authentication API"</command>
+          <requires_approval>false</requires_approval>
+          </execute_command>
+          ```
+    - **If you chose "No, I will write it myself"**: The workflow will wait for you to provide the commit message manually.
+
+## 6. Post Metrics
 
 _This section is executed after both the commit and no-commit paths have been completed._
 
 1.  **Format and post report with real variables.**
 
-    **[IMPORTANT]** Regardless of success or failure, DO NOT retry the report submission. Proceed to the next step.
+        **[IMPORTANT]** Regardless of success or failure, DO NOT retry the report submission. Proceed to the next step.
 
-    ```xml
-    <execute_command>
-    <command>
-    bash << 'EOF'
-    REPO_NAME=$(basename -s .git $(git config --get remote.origin.url))
-    REPO_URL=$(git config --get remote.origin.url)
-    CREATED_BY=$(git config user.name)
-    ESTIMATION_MODEL="hours = (filesChanged * 0.1) + ((linesAdded + linesDeleted) * 0.01) + (criticalIssues * 0.5) + (highPriorityIssues * 0.2)"
-    ESTIMATED_HOURS=$(echo "$FILES_CHANGED * 0.1 + ($LINES_ADDED + $LINES_DELETED) * 0.01 + $CRITICAL_ISSUES * 0.5 + $HIGH_PRIORITY_ISSUES * 0.2" | bc)
+        ```xml
+        <execute_command>
+        <command>
+        bash << 'EOF'
+        # Source the collected variables to make them available in this script's environment
+        source /tmp/git_stats.sh
 
-    REPORT_JSON='{
-      "taskName": "AI-Generated Task Name based on diff",
-      "repoName": "'"$REPO_NAME"'",
-      "repoUrl": "'"$REPO_URL"'",
-      "createdBy": "'"$CREATED_BY"'",
-      "filesChanged": "'"$FILES_CHANGED"'",
-      "linesAdded": "'"$LINES_ADDED"'",
-      "linesDeleted": "'"$LINES_DELETED"'",
-      "criticalIssues": "'"$CRITICAL_ISSUES"'",
-      "highPriorityIssues": "'"$HIGH_PRIORITY_ISSUES"'",
-      "estimatedHours": "'"$ESTIMATED_HOURS"'",
-      "estimationModel": "'"$ESTIMATION_MODEL"'"
-    }'
+        REPO_NAME=$(basename -s .git $(git config --get remote.origin.url))
+        REPO_URL=$(git config --get remote.origin.url)
+        # The 'CREATED_BY' variable for the report can use the 'SUBMITTER' variable we collected
+        CREATED_BY=$SUBMITTER
+        ESTIMATION_MODEL="hours = (filesChanged * 0.1) + ((linesAdded + linesDeleted) * 0.01) + (criticalIssues * 0.5) + (highPriorityIssues * 0.2)"
+        ESTIMATED_HOURS=$(echo "scale=2; $FILES_CHANGED * 0.1 + ($LINES_ADDED + $LINES_DELETED) * 0.01 + $CRITICAL_ISSUES_COUNT * 0.5 + $HIGH_PRIORITY_ISSUES_COUNT * 0.2" | bc)
 
-    RESPONSE=$(curl --max-time 3 -s -w "\n%{http_code}" -X POST -H "Content-Type: application/json" -d "$REPORT_JSON" https://api-gateway-dev.ab-inbev.cn/budtech-fe-tool-server/api/v1/report/codereview)
+        REPORT_JSON=$(cat <<END_JSON
+        {
+          "taskName": "$CHANGESET_SUMMARY",
+          "repoName": "$REPO_NAME",
+          "repoUrl": "$REPO_URL",
+          "createdBy": "$CREATED_BY",
+          "filesChanged": "$FILES_CHANGED",
+          "linesAdded": "$LINES_ADDED",
+          "linesDeleted": "$LINES_DELETED",
+          "criticalIssues": "$CRITICAL_ISSUES_COUNT",
+          "highPriorityIssues": "$HIGH_PRIORITY_ISSUES_COUNT",
+          "estimatedHours": "$ESTIMATED_HOURS",
+          "estimationModel": "$ESTIMATION_MODEL"
+        }
+        END_JSON
+        )
 
-    HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
-    BODY=$(echo "$RESPONSE" | sed '$d')
+        RESPONSE=$(curl --max-time 3 -s -w "\n%{http_code}" -X POST -H "Content-Type: application/json" -d "$REPORT_JSON" https://api-gateway-dev.ab-inbev.cn/budtech-fe-tool-server/api/v1/report/codereview)
 
-    if echo "$BODY" | grep -q '"code":200'; then
-      echo "Successfully reported code review metrics."
-    else
-      echo "Error: Failed to report metrics. HTTP Status: $HTTP_CODE, Response: $BODY"
-    fi
-    EOF
-    </command>
-    <requires_approval>false</requires_approval>
-    </execute_command>
-    ```
+        HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+        BODY=$(echo "$RESPONSE" | sed '$d')
 
-## 6. Complete Workflow
+        if echo "$BODY" | grep -q '"code":200'; then
+          echo "Successfully reported code review metrics."
+        else
+          echo "Error: Failed to report metrics. HTTP Status: $HTTP_CODE, Response: $BODY"
+        fi
+        EOF
+        </command>
+        <requires_approval>false</requires_approval>
+        </execute_command>
+        ```
+
+## 7. Complete Workflow
 
 1.  **Final Confirmation**: The final result confirms the outcome of the workflow.
 
     ```xml
     <attempt_completion>
     <result>
-    The workflow has completed. The code review report has been submitted.
+    The workflow has completed. The code review report has been submitted and the memory bank has been updated.
     </result>
     </attempt_completion>
     ```
