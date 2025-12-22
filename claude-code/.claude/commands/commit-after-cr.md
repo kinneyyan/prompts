@@ -1,101 +1,209 @@
-# Git Commit After Code Review [with report]
+---
+description: Analyze changes, run pre-commit quality checks, update memory bank, and commit with review metrics.
+allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git commit:*), Bash(git add:*)
+---
 
-I'll analyze your changes and perform a code review. If the review passes, I will create a meaningful commit message. Regardless of the review result, I will report the data at the end of the process.
+# Git Commit After Code Review
 
-**Pre-Commit Quality Checks:**
-Before committing, I'll verify:
+This workflow analyzes your changes, runs pre-commit quality checks, updates the project's memory bank, and then follows a conditional path. If you choose not to commit, a review report is sent immediately. If you choose to commit, the report is sent only after all commit operations are successfully completed.
 
-- No obvious errors in changed files
-- Code review passes (using project architecture & spec references)
+## 0. Workflow Overview Diagram
 
-First, let me check if this is a git repository and what's changed:
+```mermaid
+graph TD
+    A[Pre-Commit Verification] --> B[Code Review and Analysis];
+    B --> C[Generate Review Report & Data Summary];
+    C --> D{Present Findings & Request Decision?};
+    D -- Choose: Do not commit --> G[Post Metrics];
+    D -- Choose: Commit --> E[Path: Stage and Commit];
+    subgraph E
+        direction LR
+        E1{Approve Commit Msg?};
+        E1 -- "Yes, and update" --> E2[Update Memory Bank];
+        E2 --> E2_1[Stage Memory Files];
+        E2_1 --> E3[Execute Commit];
+        E1 -- "Yes" --> E3;
+    end
+    E --> G;
+    G --> H[Complete Workflow];
 
-```bash
-# Verify we're in a git repository
-if ! git rev-parse --git-dir > /dev/null 2>&1; then
-    echo "Error: Not a git repository"
-    echo "This command requires git version control"
-    exit 1
-fi
-
-# Check if we have changes to commit
-if ! git diff --cached --quiet || ! git diff --quiet; then
-    echo "Changes detected:"
-    git status --short
-else
-    echo "No changes to commit"
-    exit 0
-fi
-
-# Show detailed changes
-git diff --cached --stat
-git diff --stat
+    style D fill:#f9f,stroke:#333,stroke-width:2px
 ```
 
-Now I'll analyze the changes to determine:
+## 1. Pre-Commit Verification
 
-1. What files were modified
-2. The nature of changes (feature, fix, refactor, etc.)
-3. The scope/component affected
+1.  **Verify Git Repository**: Check if the current directory is a git repository.
 
-If the analysis or commit encounters errors:
+    ```bash
+    if ! git rev-parse --git-dir > /dev/null 2>&1; then
+        echo "Error: Not a git repository. This command requires git version control."
+        exit 1
+    fi
+    echo "Success: Git repository verified."
+    ```
 
-- I'll explain what went wrong
-- Suggest how to resolve it
-- Ensure no partial commits occur
+2.  **Check for Changes**: Verify if there are any staged, unstaged, or untracked changes. If there are no changes, the workflow should stop.
 
-```bash
-# If nothing is staged, I'll stage modified files (not untracked)
-if git diff --cached --quiet; then
-    echo "No files staged. Staging modified files..."
-    git add -u
-fi
+    ```bash
+    if [ -z "$(git status --porcelain)" ]; then
+        echo "No changes detected. Working tree is clean. Exiting workflow."
+        exit 0
+    else
+        echo "Changes detected. Proceeding with review."
+    fi
+    ```
 
-# Show what will be committed
-git diff --cached --name-status
-```
+## 2. Code Review and Analysis
 
-Based on the analysis, I'll perform a code review:
+1.  **Analyze Changes**: Get a complete overview of all changes:
 
-1. Understand the architecture from @memory-bank/project-brief.md and @README.md
-2. Understand the coding conventions from @memory-bank/code-spec.md
-3. Execute code review using 3-tier severity system (`$CRITICAL_ISSUES_COUNT`, `$HIGH_PRIORITY_ISSUES_COUNT` are prepared for the final data report):
+    ```bash
+    git status && git diff --no-pager
+    ```
 
-   - 🚨 CRITICAL (Must fix) - Found: $CRITICAL_ISSUES_COUNT
+2.  **Reference Project Context**: Read `README.md` and memory bank files for context:
+    Read and understand the files in the following paths, if they don't exist, it's okay, proceed to the next step:
 
-     - Configuration changes risking outages
-     - Security vulnerabilities
-     - Data loss risks
-     - Breaking changes
+    - @./README.md
+    - @./memory-bank/project-brief.md
+    - @./memory-bank/code-spec.md
 
-   - ⚠️ HIGH PRIORITY (Should fix) - Found: $HIGH_PRIORITY_ISSUES_COUNT
+3.  **Perform Code Review and Set Variables**: Analyze the code changes and project context to identify issues. Determine the counts of critical and high-priority issues for the report.
 
-     - Performance degradation risks
-     - Maintainability issues
-     - Missing error handling
+## 3. Generate Review Report & Data Summary
 
-   - 💡 SUGGESTIONS (Consider)
+1.  **Collect All Data**: Generate a changeset summary and collect all statistics and metadata.
 
-     - Code style improvements
-     - Optimization opportunities
-     - Additional test coverage
+    ```bash
+    bash << 'EOF'
+    # Part 1: Placeholder for changeset summary
+    CHANGESET_SUMMARY="Reviewed and analyzed code changes for commit."
 
-Then determine if the code review passes based on the following conditions:
+    # Part 2: Get branch and submitter info
+    CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+    SUBMITTER=$(git config user.name)
 
-- **Review Passed**: If no `CRITICAL` issues are found.
-- **Review Failed**: If any `CRITICAL` issues are detected.
+    # Part 3: Get file and line change statistics
+    read -r tracked_files tracked_additions tracked_deletions <<_EOF_
+    $( (git diff --numstat 2>/dev/null; git diff --cached --numstat 2>/dev/null) | awk '
+    { files += 1; additions += $1; deletions += $2 }
+    END { print files+0, additions+0, deletions+0 }
+    ')
+    _EOF_
 
-If **Review Passed**, I'll create a conventional commit message:
+    # Handle untracked files
+    untracked_files_list=$(git ls-files --others --exclude-standard)
+    untracked_count=0
+    untracked_lines=0
+    if [ -n "$untracked_files_list" ]; then
+      untracked_count=$(echo "$untracked_files_list" | wc -l)
+      untracked_lines=$(echo "$untracked_files_list" | xargs wc -l 2>/dev/null | tail -n 1 | awk '{print $1}' || echo 0)
+    fi
 
-- **Type**: feat|fix|docs|style|refactor|test|chore
-- **Scope**: component or area affected (optional)
-- **Subject**: clear description in present tense
-- **Body**: why the change was made (if needed)
+    # Calculate final totals
+    TOTAL_FILES_CHANGED=$((tracked_files + untracked_count))
+    TOTAL_LINES_ADDED=$((tracked_additions + untracked_lines))
+    TOTAL_LINES_DELETED=$((tracked_deletions))
 
-```bash
-# I'll create the commit with the analyzed message
-# Example: git commit -m "fix(auth): resolve login timeout issue"
-```
+    # Part 4: CR variables (should be provided by analysis in step 2.3)
+    CRITICAL_ISSUES_COUNT=${CRITICAL_ISSUES_COUNT:-0}
+    HIGH_PRIORITY_ISSUES_COUNT=${HIGH_PRIORITY_ISSUES_COUNT:-0}
+
+    # Part 5: Write to temp file
+    cat > /tmp/git_stats.sh <<INNER_EOF
+    CHANGESET_SUMMARY='${CHANGESET_SUMMARY}'
+    CURRENT_BRANCH='${CURRENT_BRANCH}'
+    SUBMITTER='${SUBMITTER}'
+    FILES_CHANGED=${TOTAL_FILES_CHANGED}
+    LINES_ADDED=${TOTAL_LINES_ADDED}
+    LINES_DELETED=${TOTAL_LINES_DELETED}
+    CRITICAL_ISSUES_COUNT=${CRITICAL_ISSUES_COUNT}
+    HIGH_PRIORITY_ISSUES_COUNT=${HIGH_PRIORITY_ISSUES_COUNT}
+    INNER_EOF
+
+    echo "All variables collected and stored in /tmp/git_stats.sh"
+    cat /tmp/git_stats.sh
+    EOF
+    ```
+
+## 4. Present Findings & Request Decision
+
+Present the review findings to the user and ask for their decision:
+
+- **🚨 CRITICAL (Must fix)**: List critical issues.
+- **⚠️ HIGH PRIORITY (Should fix)**: List high priority issues.
+- **💡 SUGGESTIONS**: List suggestions.
+
+Ask: "What would you like to do next?"
+Options: `1. Proceed to commit`, `2. Do not commit, I will fix the issues`
+
+## 5. Execute Subsequent Paths
+
+### 5.1 Path: Do Not Commit
+
+If the user chooses "Do not commit, I will fix the issues", proceed to **Section 6: Post Metrics**.
+
+### 5.2 Path: Stage and Commit
+
+If the user chooses "Proceed to commit":
+
+1.  **Stage All Files**:
+
+    ```bash
+    if git diff --cached --quiet; then
+        echo "No files staged. Staging all changes including new files..."
+        git add -A
+    fi
+    git diff --cached --name-status
+    ```
+
+2.  **Generate and Present Commit Message for Approval**:
+    Generate a conventional commit message and ask: "Do you approve this commit message?"
+    Options: `1. Yes, commit with this message`, `2. Yes, commit with this message after updating memory bank`, `3. No, I will write it myself`
+
+3.  **Execute Conditional Commit**:
+
+    - **If "Yes, commit with this message after updating memory bank"**:
+
+      1.  **Update Memory Bank**:
+
+          - Check if `./memory-bank/active-context.md` and `./memory-bank/changelog.md` exist. If they do not exist, skip the following sub-steps.
+          - Based on the context information, update the summary of code changes (`$CHANGESET_SUMMARY`) to `./memory-bank/active-context.md` and `./memory-bank/changelog.md`.
+          - Additionally, attach the code review report information after updating the entry in `./memory-bank/active-context.md`, using a Markdown code block with YAML format as shown below:
+
+            ````markdown
+            - **[Current Date]**: [Brief Summary of Changes]
+
+              ```yaml
+              codeReviewSummary: <Summarize the results of this code review>
+              branch: $CURRENT_BRANCH
+              submitter: $SUBMITTER
+              filesChanged: $FILES_CHANGED
+              linesAdded: $LINES_ADDED
+              linesDeleted: $LINES_DELETED
+              criticalIssues: $CRITICAL_ISSUES_COUNT
+              highPriorityIssues: $HIGH_PRIORITY_ISSUES_COUNT
+              ```
+            ````
+
+      2.  **Stage Updated Memory Bank Files**:
+
+      ```bash
+      git add ./memory-bank/active-context.md ./memory-bank/changelog.md
+      echo "Staged updated memory bank files."
+      ```
+
+      3. Execute commit:
+         ```bash
+         git commit -m "[Generated Message Title]" -m "[Generated Message Body]"
+         ```
+
+    - **If "Yes, commit with this message"**:
+      Execute commit directly:
+      ```bash
+      git commit -m "[Generated Message Title]" -m "[Generated Message Body]"
+      ```
+    - **If "No, I will write it myself"**: Wait for manual input.
 
 The commit message will be concise, meaningful, and follow your project's conventions if I can detect them from recent commits.
 
@@ -109,89 +217,37 @@ The commit message will be concise, meaningful, and follow your project's conven
 
 The commit will use only your existing git user configuration, maintaining full ownership and authenticity of your commits.
 
-Finally, **regardless of whether the code review passes**, I will start collecting and reporting data:
+## 6. Post Metrics
 
-If not committed, I will collect statistics on all current changes (staged, unstaged, and untracked) to prepare the report:
-
-```bash
-# Get the number of changed files and lines (include untracked files)
-bash << 'EOF'
-quick_git_stats() {
-    # 综合统计所有变更
-    {
-        # 已追踪文件的变更
-        git diff --numstat 2>/dev/null
-        # 已暂存文件的变更
-        git diff --cached --numstat 2>/dev/null
-    } | awk '
-    {
-        if (NF >= 2) {
-            additions += $1
-            deletions += $2
-            files++
-        }
-    }
-    END {
-        print "FILES_CHANGED=" files+0
-        print "LINES_ADDED=" additions+0
-        print "LINES_DELETED=" deletions+0
-    }' > /tmp/git_stats.sh
-
-    # 执行临时文件中的变量赋值
-    source /tmp/git_stats.sh
-    rm -f /tmp/git_stats.sh
-
-    # 单独处理未追踪文件
-    untracked_count=$(git ls-files --others --exclude-standard | wc -l)
-    untracked_lines=$(git ls-files --others --exclude-standard | xargs wc -l 2>/dev/null | tail -1 | awk '{print $1}' || echo 0)
-
-    # 更新最终统计
-    FILES_CHANGED=$((FILES_CHANGED + untracked_count))
-    LINES_ADDED=$((LINES_ADDED + untracked_lines))
-}
-quick_git_stats
-EOF
-```
-
-Else If submitted, I will gather statistics from the last commit for the report:
+Regardless of success or failure, DO NOT retry the report submission.
 
 ```bash
-# Get the number of files and lines changed in the last commit
 bash << 'EOF'
-LAST_COMMIT_STATS=$(git diff-tree --shortstat HEAD~1 HEAD 2>/dev/null)
-FILES_CHANGED=$(echo "$LAST_COMMIT_STATS" | grep -o '[0-9]* files\?' | grep -o '[0-9]*')
-LINES_ADDED=$(echo "$LAST_COMMIT_STATS" | grep -o '[0-9]* insertions\?' | grep -o '[0-9]*')
-LINES_DELETED=$(echo "$LAST_COMMIT_STATS" | grep -o '[0-9]* deletions\?' | grep -o '[0-9]*')
-FILES_CHANGED=${FILES_CHANGED:-0}
-LINES_ADDED=${LINES_ADDED:-0}
-LINES_DELETED=${LINES_DELETED:-0}
-EOF
-```
+# Source variables
+source /tmp/git_stats.sh
 
-Then, I will collect all the information and post the code review report:
-
-```bash
-# Format and post report with real variables.
-bash << 'EOF'
 REPO_NAME=$(basename -s .git $(git config --get remote.origin.url))
 REPO_URL=$(git config --get remote.origin.url)
-CREATED_BY=$(git config user.name)
+CREATED_BY=$SUBMITTER
 ESTIMATION_MODEL="hours = (filesChanged * 0.1) + ((linesAdded + linesDeleted) * 0.01) + (criticalIssues * 0.5) + (highPriorityIssues * 0.2)"
-ESTIMATED_HOURS=$(echo "$FILES_CHANGED * 0.1 + ($LINES_ADDED + $LINES_DELETED) * 0.01 + $CRITICAL_ISSUES_COUNT * 0.5 + $HIGH_PRIORITY_ISSUES_COUNT * 0.2" | bc)
+ESTIMATED_HOURS=$(echo "scale=2; $FILES_CHANGED * 0.1 + ($LINES_ADDED + $LINES_DELETED) * 0.01 + $CRITICAL_ISSUES_COUNT * 0.5 + $HIGH_PRIORITY_ISSUES_COUNT * 0.2" | bc)
 
-REPORT_JSON='{
-  "taskName": "AI-Generated Task Name based on diff",
-  "repoName": "'"$REPO_NAME"'",
-  "repoUrl": "'"$REPO_URL"'",
-  "createdBy": "'"$CREATED_BY"'",
-  "filesChanged": "'"$FILES_CHANGED"'",
-  "linesAdded": "'"$LINES_ADDED"'",
-  "linesDeleted": "'"$LINES_DELETED"'",
-  "criticalIssues": "'"$CRITICAL_ISSUES_COUNT"'",
-  "highPriorityIssues": "'"$HIGH_PRIORITY_ISSUES_COUNT"'",
-  "estimatedHours": "'"$ESTIMATED_HOURS"'",
-  "estimationModel": "'"$ESTIMATION_MODEL"'"
-}'
+REPORT_JSON=$(cat <<END_JSON
+{
+  "taskName": "$CHANGESET_SUMMARY",
+  "repoName": "$REPO_NAME",
+  "repoUrl": "$REPO_URL",
+  "createdBy": "$CREATED_BY",
+  "filesChanged": "$FILES_CHANGED",
+  "linesAdded": "$LINES_ADDED",
+  "linesDeleted": "$LINES_DELETED",
+  "criticalIssues": "$CRITICAL_ISSUES_COUNT",
+  "highPriorityIssues": "$HIGH_PRIORITY_ISSUES_COUNT",
+  "estimatedHours": "$ESTIMATED_HOURS",
+  "estimationModel": "$ESTIMATION_MODEL"
+}
+END_JSON
+)
 
 RESPONSE=$(curl --max-time 3 -s -w "\n%{http_code}" -X POST -H "Content-Type: application/json" -d "$REPORT_JSON" https://api-gateway-dev.ab-inbev.cn/budtech-fe-tool-server/api/v1/report/codereview)
 
@@ -205,3 +261,7 @@ else
 fi
 EOF
 ```
+
+## 7. Complete Workflow
+
+Confirm the outcome: "The workflow has completed. The code review report has been submitted and the memory bank has been updated."
