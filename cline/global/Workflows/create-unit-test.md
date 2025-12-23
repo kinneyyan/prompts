@@ -25,8 +25,12 @@ flowchart TD
     F --> G[生成后统计与评估];
     G --> H{运行测试确认};
     H -- 是 --> I[运行测试并分析结果];
-    H -- 否 --> J[收集信息并发布报告];
-    I --> J;
+    I --> I2{测试全通过?};
+    I2 -- 是 --> I3[提取真实覆盖率];
+    I2 -- 否 --> I4[估算覆盖率数据];
+    H -- 否 --> I4;
+    I3 --> J[发布报告];
+    I4 --> J;
     J --> K[输出最终结果];
     K --> Z;
 ```
@@ -115,7 +119,7 @@ flowchart TD
 3.  **暂存统计数据**：将收集到的文件数、用例数、代码行数存储在临时变量中，供最终 JSON 报告的 `filesGenerated`、`testCasesGenerated` 和 `totalLinesOfCode` 字段使用。
 4.  **应用评估模型**：基于收集到的统计数据，使用预设模型计算一名高级前端工程师完成同等测试所需的时间：
     ```
-    预估小时数 = (文件数 × 0.15) + (用例数 × 0.25) + (代码行数 × 0.008)
+    预估小时数 = (文件数 × 0.10) + (用例数 × 0.15) + (代码行数 × 0.006)
     ```
 5.  **暂存评估结果**：将计算的评估结果暂存，用于最终 JSON 报告的 `estimatedHours` 和 `estimationModel` 字段。
 
@@ -134,17 +138,78 @@ flowchart TD
     </ask_followup_question>
     ```
 
-3.  **执行操作与结果分析**：
-    - 如果用户选择"是"，则：
-      - 使用 `execute_command` 工具执行测试命令（例如 `npx vitest run --reporter=json --coverage [file1] [file2]...`），明确指出该命令将**只针对**本次新生成的文件，并启用覆盖率报告功能。**【重要】**如果测试结果报错了或者有失败的用例，不要尝试去自动修复，只负责解析测试结果。
-      - **解析测试结果**：等待测试命令执行完毕，捕获并解析其 JSON 格式输出。
-      - **统计执行结果**：从解析结果中提取并记录**通过的测试用例数**和**失败的测试用例数**，用于最终 JSON 报告的 `testCasesPassed` 和 `testCasesFailed` 字段。
-      - **收集覆盖率数据**：读取覆盖率报告数据（若无覆盖率报告，则跳过此步骤），提取并记录以下覆盖率指标，用于最终 JSON 报告的对应字段：
-        - **Stmts** (语句覆盖率) → `coverageStatements`
-        - **Branch** (分支覆盖率) → `coverageBranches`
-        - **Funcs** (函数覆盖率) → `coverageFunctions`
-        - **Lines** (行覆盖率) → `coverageLines`
-    - 如果用户选择"否"，则跳过测试执行和结果分析步骤。
+3.  **数据收集与覆盖率分析**：
+
+    根据用户的选择，执行不同的数据获取路径。无论走哪条路径，最终都必须产出 `testCasesPassed`、`testCasesFailed`、`coverageStatements`、`coverageBranches`、`coverageFunctions`、`coverageLines` 和 `coverageSource` 字段。
+
+    - **路径 A：执行测试并分析结果 (用户选择“是”)**
+
+      - **【重要】**：执行测试只针对本次新生成的文件。如果测试报错或失败，**严禁**自动修复
+      - 使用 `execute_command` 工具执行以下命令执行测试并过滤输出：
+
+        ```xml
+        <execute_command>
+        <command>
+        bash << 'EOF'
+        # 执行测试并将输出暂存到 /tmp/ut_report.txt
+        TEMP_FILE="/tmp/ut_report.txt"
+        npx vitest run --reporter=json --coverage [file1] [file2]... > $TEMP_FILE
+        # 解析 /tmp/ut_report.txt 并提取必要信息
+        # 检查文件是否存在
+        if [ ! -f "$TEMP_FILE" ]; then
+          echo "Error: File '$TEMP_FILE' not found."
+          exit 1
+        fi
+        # 1. 提取 JSON 统计字段 (使用 grep 和 cut)
+        NUM_TOTAL_TESTS=$(grep -oE '"numTotalTests":[0-9]+' "$TEMP_FILE" | cut -d: -f2)
+        NUM_PASSED_TESTS=$(grep -oE '"numPassedTests":[0-9]+' "$TEMP_FILE" | cut -d: -f2)
+        NUM_FAILED_TESTS=$(grep -oE '"numFailedTests":[0-9]+' "$TEMP_FILE" | cut -d: -f2)
+        echo "[Test Results]"
+        echo "Total Tests:   $NUM_TOTAL_TESTS"
+        echo "Passed Tests:  $NUM_PASSED_TESTS"
+        echo "Failed Tests:  $NUM_FAILED_TESTS"
+        echo ""
+        # 2. 提取覆盖率指标 (使用 awk)
+        COVERAGE_LINE=$(grep "^All files" "$TEMP_FILE")
+        if [ -n "$COVERAGE_LINE" ]; then
+          COV_STMTS=$(echo "$COVERAGE_LINE" | awk -F'|' '{print $2}' | tr -d ' ')
+          COV_BRANCH=$(echo "$COVERAGE_LINE" | awk -F'|' '{print $3}' | tr -d ' ')
+          COV_FUNCS=$(echo "$COVERAGE_LINE" | awk -F'|' '{print $4}' | tr -d ' ')
+          COV_LINES=$(echo "$COVERAGE_LINE" | awk -F'|' '{print $5}' | tr -d ' ')
+          echo "[Coverage Report (All files)]"
+          echo "Statements:    $COV_STMTS%"
+          echo "Branches:      $COV_BRANCH%"
+          echo "Functions:     $COV_FUNCS%"
+          echo "Lines:         $COV_LINES%"
+        else
+          echo "No Coverage Report"
+        fi
+        EOF
+        </command>
+        </execute_command>
+        ```
+
+      - **解析执行结果**：从终端输出中提取并记录**通过的测试用例数**和**失败的测试用例数**，用于最终报告的 `testCasesPassed` 和 `testCasesFailed` 字段。
+      - **判定覆盖率来源**：
+        - **若测试全部通过**：
+          - 设置 `coverageSource` 为 `"real"`。
+          - **提取真实覆盖率**：从终端输出中提取 `Statements`、`Branches`、`Functions`、`Lines`，将这些值分别存入`coverageStatements` 等变量。
+        - **若有报错或部分用例失败**：
+          - 设置 `coverageSource` 为 `"estimated"`。
+          - **执行静态估算**：直接进入下方的“静态估算覆盖率逻辑”。
+
+    - **路径 B：不执行测试 (用户选择“否”)**
+      - 设置 `testCasesPassed` 和 `testCasesFailed` 为 `"N/A"`。
+      - 设置 `coverageSource` 为 `"estimated"`。
+      - **执行静态估算**：直接进入下方的“静态估算覆盖率逻辑”。
+
+4.  **静态估算覆盖率逻辑 (仅在 coverageSource 为 "estimated" 时执行)**：
+
+    - **分析过程**：对比目标源文件（`src`）与生成的测试文件（`__tests__`）。
+    - **评估准则**：
+      - 检查测试用例是否覆盖了源文件的核心导出函数、主要的逻辑判断分支（if/else）、以及关键的 UI 渲染条件。
+      - 根据覆盖的广度和深度，主观给出一个 0-100 之间的整数作为估算百分比。
+    - **产出结果**：将估算出的四个指标（Stmts, Branch, Funcs, Lines）作为 0-100 的整数存入对应的 coverage 变量。
 
 ## 8. 收集信息并发布报告 (Collect Information and Post Report)
 
@@ -154,6 +219,7 @@ flowchart TD
 
     ```xml
     <execute_command>
+    <command>
     bash << 'EOF'
     REPO_NAME=$(basename -s .git $(git config --get remote.origin.url))
     REPO_URL=$(git config --get remote.origin.url)
@@ -169,12 +235,13 @@ flowchart TD
       "totalLinesOfCode": "<代码行数>",
       "testCasesPassed": "<通过数 或 'N/A'>",
       "testCasesFailed": "<失败数 或 'N/A'>",
-      "coverageStatements": "<Stmts覆盖率 或 'N/A'>",
-      "coverageBranches": "<Branch覆盖率 或 'N/A'>",
-      "coverageFunctions": "<Funcs覆盖率 或 'N/A'>",
-      "coverageLines": "<Lines覆盖率 或 'N/A'>",
+      "coverageStatements": "<Stmts覆盖率 (0-100)>",
+      "coverageBranches": "<Branch覆盖率 (0-100)>",
+      "coverageFunctions": "<Funcs覆盖率 (0-100)>",
+      "coverageLines": "<Lines覆盖率 (0-100)>",
+      "coverageSource": "<'real' 或 'estimated'>",
       "estimatedHours": "<评估的小时数>",
-      "estimationModel": "hours = (files * 0.15) + (cases * 0.25) + (lines * 0.008)"
+      "estimationModel": "hours = (files * 0.10) + (cases * 0.15) + (lines * 0.006)"
     }'
 
     RESPONSE=$(curl --max-time 3 -s -w "\n%{http_code}" -X POST -H "Content-Type: application/json" -d "$REPORT_JSON" https://api-gateway-dev.ab-inbev.cn/budtech-fe-tool-server/api/v1/report/unittest)
@@ -188,7 +255,6 @@ flowchart TD
       echo "Error: Failed to report metrics. HTTP Status: $HTTP_CODE, Response: $BODY"
     fi
     EOF
-    <command>
     </command>
     <requires_approval>false</requires_approval>
     </execute_command>
@@ -197,8 +263,8 @@ flowchart TD
 ## 9. 输出最终结果 (Output Final Result)
 
 1.  **输出最终结果**：使用 `attempt_completion` 工具，将以下两部分内容呈现给用户：
-    - 第 9 步生成的标准化 JSON 报告。
-    - 上一步生成的上报状态信息。
+    - 标准化 JSON 报告
+    - 上报状态信息
 
 </detailed_sequence_steps>
 
