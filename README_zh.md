@@ -10,7 +10,45 @@
 
 本 repo 提供了两个 shell 脚本提供一键配置到 Cline/Claude Code 的个人/全局配置中：
 
-`TODO:`
+- 给 Cline 配置 hooks、rules、workflows
+
+  - 示例一：配置 `cline/global/Workflows/commit-after-cr.md` ：
+
+    ```bash
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/kinneyyan/prompts/refs/heads/main/setup_cline.sh)" \
+      "setup_cline.sh" \
+      "https://github.com/kinneyyan/prompts/raw/refs/heads/main/cline/global/Workflows/commit-after-cr.md" \
+      "workflows"
+    ```
+
+  - 示例二： 配置 `cline/global/Hooks/PostToolUse` ：
+
+    ```bash
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/kinneyyan/prompts/refs/heads/main/setup_cline.sh)" \
+      "setup_cline.sh" \
+      "https://github.com/kinneyyan/prompts/raw/refs/heads/main/cline/global/Hooks/PostToolUse" \
+      "hooks"
+    ```
+
+- 给 Claude Code 配置 sub-agents、slash-commands
+
+  - 示例一： 配置 `claude-code/.claude/commands/commit-after-cr.md` ：
+
+    ```bash
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/kinneyyan/prompts/refs/heads/main/setup_claude.sh)" \
+        "setup_claude.sh" \
+        "https://github.com/kinneyyan/prompts/raw/refs/heads/main/claude-code/.claude/commands/commit-after-cr.md" \
+        "commands"
+    ```
+
+  - 示例二： 配置 `claude-code/.claude/agents/frontend-developer.md` ：
+
+    ```bash
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/kinneyyan/prompts/refs/heads/main/setup_claude.sh)" \
+        "setup_claude.sh" \
+        "https://github.com/kinneyyan/prompts/raw/refs/heads/main/claude-code/.claude/agents/frontend-developer.md" \
+        "agents"
+    ```
 
 ## 📁 目录结构
 

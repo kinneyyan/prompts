@@ -10,7 +10,45 @@ Some files are for use within my enterprise team's projects, such as `claude-cod
 
 This repo provides two shell scripts for one‑click configuration into personal/global settings of Cline/Claude Code:
 
-`TODO:`
+- Configure hooks, rules, workflows for Cline
+
+  - Example 1: Configure `cline/global/Workflows/commit-after-cr.md`:
+
+    ```bash
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/kinneyyan/prompts/refs/heads/main/setup_cline.sh)" \
+      "setup_cline.sh" \
+      "https://github.com/kinneyyan/prompts/raw/refs/heads/main/cline/global/Workflows/commit-after-cr.md" \
+      "workflows"
+    ```
+
+  - Example 2: Configure `cline/global/Hooks/PostToolUse`:
+
+    ```bash
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/kinneyyan/prompts/refs/heads/main/setup_cline.sh)" \
+      "setup_cline.sh" \
+      "https://github.com/kinneyyan/prompts/raw/refs/heads/main/cline/global/Hooks/PostToolUse" \
+      "hooks"
+    ```
+
+- Configure sub-agents, slash-commands for Claude Code
+
+  - Example 1: Configure `claude-code/.claude/commands/commit-after-cr.md`:
+
+    ```bash
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/kinneyyan/prompts/refs/heads/main/setup_claude.sh)" \
+        "setup_claude.sh" \
+        "https://github.com/kinneyyan/prompts/raw/refs/heads/main/claude-code/.claude/commands/commit-after-cr.md" \
+        "commands"
+    ```
+
+  - Example 2: Configure `claude-code/.claude/agents/frontend-developer.md`:
+
+    ```bash
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/kinneyyan/prompts/refs/heads/main/setup_claude.sh)" \
+        "setup_claude.sh" \
+        "https://github.com/kinneyyan/prompts/raw/refs/heads/main/claude-code/.claude/agents/frontend-developer.md" \
+        "agents"
+    ```
 
 ## 📁 Directory Structure
 
