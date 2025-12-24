@@ -1,0 +1,55 @@
+# prompts
+
+[![](https://img.shields.io/badge/%F0%9F%87%AC%F0%9F%87%A7-English-000aff?style=flat)](README.md)
+
+一些 Cline 和 Claude Code 的提示词、工作流/斜杠命令和配置的最佳实践。
+
+部分文件为针对本人企业团队内的项目使用，例如 `claude-code/project-memory-for-ice3`、`memory-bank/code-spec.md`、`memory-bank/testing-spec.md`。
+
+## 🚀 快速开始
+
+本 repo 提供了两个 shell 脚本提供一键配置到 Cline/Claude Code 的个人/全局配置中：
+
+`TODO:`
+
+## 📁 目录结构
+
+```bash
+.
+├── claude-code # Claude Code 相关
+│   ├── .claude
+│   │   ├── agents # sub-agents
+│   │   ├── commands # slash-commands。部分取自 https://github.com/brennercruvinel/CCPlugins/tree/main/commands
+│   │   ├── hooks # hooks
+│   │   └── settings.json # Claude Code 个人常用配置
+│   ├── claude-code-router
+│   │   └── config.json # claude-code-router 的个人常用配置
+│   └── project-memory-for-ice3 # 适用于 ice.js3 项目的内存文件
+├── cline # Cline 相关
+│   ├── global # 全局的 hooks、rules、workflows
+│   │   ├── Hooks
+│   │   ├── Rules
+│   │   └── Workflows
+│   └── workspace # 项目级别的 hooks、rules、workflows
+│       ├── Rules
+│       │   └── memory-bank.md # 在 Cline 原版基础上添加了 `code-spec.md` 和 `testing-spec.md`
+│       └── Workflows
+└── memory-bank # 内存库
+    ├── code-spec.md # 代码规约
+    └── testing-spec.md # 单元测试编写规范 (EARS 格式)
+```
+
+## 📝 参考链接
+
+### Cline
+
+- [Cline Community Prompts](https://github.com/cline/prompts)
+- [Cline Rules](https://docs.cline.bot/features/cline-rules)
+- [Cline Memory Bank](https://docs.cline.bot/prompting/cline-memory-bank)
+
+### Claude Code
+
+- [Claude Code 设置](https://docs.anthropic.com/zh-CN/docs/claude-code/settings)
+- [管理 Claude 的内存](https://docs.anthropic.com/zh-CN/docs/claude-code/memory)
+- [CCPlugins](https://github.com/brennercruvinel/CCPlugins)
+- [Claude Code Subagents Collection](https://github.com/wshobson/agents)
