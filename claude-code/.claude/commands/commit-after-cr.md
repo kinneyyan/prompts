@@ -79,9 +79,10 @@ graph TD
     # Part 1: Placeholder for changeset summary
     CHANGESET_SUMMARY="Reviewed and analyzed code changes for commit."
 
-    # Part 2: Get branch and submitter info
+    # Part 2: Get branch and git user info
     CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-    SUBMITTER=$(git config user.name)
+    CREATED_BY=$(git config user.name)
+    EMAIL=$(git config user.email)
 
     # Part 3: Get file and line change statistics
     read -r tracked_files tracked_additions tracked_deletions <<_EOF_
@@ -113,7 +114,8 @@ graph TD
     cat > /tmp/git_stats.sh <<INNER_EOF
     CHANGESET_SUMMARY='${CHANGESET_SUMMARY}'
     CURRENT_BRANCH='${CURRENT_BRANCH}'
-    SUBMITTER='${SUBMITTER}'
+    CREATED_BY='${CREATED_BY}'
+    EMAIL='${EMAIL}'
     FILES_CHANGED=${TOTAL_FILES_CHANGED}
     LINES_ADDED=${TOTAL_LINES_ADDED}
     LINES_DELETED=${TOTAL_LINES_DELETED}
@@ -177,7 +179,8 @@ If the user chooses "Proceed to commit":
               ```yaml
               codeReviewSummary: <Summarize the results of this code review>
               branch: $CURRENT_BRANCH
-              submitter: $SUBMITTER
+              createdBy: $CREATED_BY
+              email: $EMAIL
               filesChanged: $FILES_CHANGED
               linesAdded: $LINES_ADDED
               linesDeleted: $LINES_DELETED
@@ -228,7 +231,6 @@ source /tmp/git_stats.sh
 
 REPO_NAME=$(basename -s .git $(git config --get remote.origin.url))
 REPO_URL=$(git config --get remote.origin.url)
-CREATED_BY=$SUBMITTER
 ESTIMATION_MODEL="hours = (filesChanged * 0.1) + ((linesAdded + linesDeleted) * 0.01) + (criticalIssues * 0.5) + (highPriorityIssues * 0.2)"
 ESTIMATED_HOURS=$(echo "scale=2; $FILES_CHANGED * 0.1 + ($LINES_ADDED + $LINES_DELETED) * 0.01 + $CRITICAL_ISSUES_COUNT * 0.5 + $HIGH_PRIORITY_ISSUES_COUNT * 0.2" | bc)
 
@@ -238,6 +240,7 @@ REPORT_JSON=$(cat <<END_JSON
   "repoName": "$REPO_NAME",
   "repoUrl": "$REPO_URL",
   "createdBy": "$CREATED_BY",
+  "email": "$EMAIL",
   "filesChanged": "$FILES_CHANGED",
   "linesAdded": "$LINES_ADDED",
   "linesDeleted": "$LINES_DELETED",

@@ -224,12 +224,14 @@ flowchart TD
     REPO_NAME=$(basename -s .git $(git config --get remote.origin.url))
     REPO_URL=$(git config --get remote.origin.url)
     CREATED_BY=$(git config user.name)
+    EMAIL=$(git config user.email)
 
     REPORT_JSON='{
       "taskName": "<用户输入的 prompt>",
       "repoName": "'"$REPO_NAME"'",
       "repoUrl": "'"$REPO_URL"'",
       "createdBy": "'"$CREATED_BY"'",
+      "email": "'"$EMAIL"'",
       "filesGenerated": "<文件数>",
       "testCasesGenerated": "<测试用例数>",
       "totalLinesOfCode": "<代码行数>",
