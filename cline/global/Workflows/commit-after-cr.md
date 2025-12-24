@@ -81,14 +81,15 @@ graph TD
 
 ## 3. Generate Review Report & Data Summary
 
-1.  **Collect All Data**: Generate a changeset summary and collect all statistics and metadata required for subsequent steps.
+1.  **Collect All Data**: Generate a changeset summary, a code review summary and collect all statistics and metadata required for subsequent steps.
 
     ```xml
     <execute_command>
     <command>
     bash << 'EOF'
-    # Part 1: Placeholder for changeset summary
-    CHANGESET_SUMMARY="Reviewed and analyzed code changes for commit."
+    # Part 1: Generate a changeset summary within 100 words and a code review summary within 300 words
+    CHANGESET_SUMMARY="Analyzed code changes for commit (within 100 words)"
+    CODE_REVIEW_SUMMARY="Summary of code review results (within 300 words)"
 
     # Part 2: Get branch and git user info
     CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
@@ -123,10 +124,12 @@ graph TD
     CRITICAL_ISSUES_COUNT=${CRITICAL_ISSUES_COUNT:-0}
     HIGH_PRIORITY_ISSUES_COUNT=${HIGH_PRIORITY_ISSUES_COUNT:-0}
 
-    # Part 5: Write all collected variables to the temp file at once, overwriting previous content.
+    # Part 5: Write all variables to the temp file
     cat > /tmp/git_stats.sh <<INNER_EOF
 
     CHANGESET_SUMMARY='${CHANGESET_SUMMARY}'
+    CODE_REVIEW_SUMMARY='${CODE_REVIEW_SUMMARY}'
+    COMMIT_ID=''
     CURRENT_BRANCH='${CURRENT_BRANCH}'
     CREATED_BY='${CREATED_BY}'
     EMAIL='${EMAIL}'
@@ -225,10 +228,10 @@ _This section is executed if the user chose "Proceed to commit"._
           3. Based on the context information, update the summary of code changes (`$CHANGESET_SUMMARY`) to `./memory-bank/active-context.md` and `./memory-bank/changelog.md`. Additionally, attach the information of the code review report after updating the entry in `./memory-bank/active-context.md`, in a Markdown code block format, as shown in the example below:
 
              ````markdown
-             - **2025-12-18**: Implement user login functionality
+             - **2025-12-18**: $CHANGESET_SUMMARY
 
                ```yaml
-               codeReviewSummary: <Summarize the results of this code review>
+               codeReviewSummary: $CODE_REVIEW_SUMMARY
                branch: $CURRENT_BRANCH
                createdBy: $CREATED_BY
                email: $EMAIL
@@ -241,6 +244,7 @@ _This section is executed if the user chose "Proceed to commit"._
              ````
 
       2.  **Stage Updated Memory Bank Files**: To ensure the memory bank updates are included in this commit, I will explicitly add them to the staging area.
+
           ```xml
           <execute_command>
           <command>
@@ -250,22 +254,41 @@ _This section is executed if the user chose "Proceed to commit"._
           <requires_approval>false</requires_approval>
           </execute_command>
           ```
-      3.  **Execute Commit**: Now, I will run the `git commit` command, which includes all changes.
+
+      3.  **Execute Commit and Get the latest commit ID**:
+
           ```xml
           <execute_command>
           <command>git commit -m "feat(auth): implement user login functionality" -m "- Added new login component" -m "- Integrated with authentication API"</command>
+          <command>
+          bash << 'EOF'
+          LATEST_COMMIT_ID=$(git rev-parse --short=7 HEAD)
+          echo "COMMIT_ID='${LATEST_COMMIT_ID}'" >> /tmp/git_stats.sh
+          echo "Commit ID captured: ${LATEST_COMMIT_ID}"
+          EOF
+          </command>
           <requires_approval>false</requires_approval>
           </execute_command>
           ```
 
     - **If you chose "Yes, commit with this message"**:
-      1.  **Execute Commit**: I will run the `git commit` command directly.
+
+      1.  **Execute Commit and Get the latest commit ID**:
+
           ```xml
           <execute_command>
           <command>git commit -m "feat(auth): implement user login functionality" -m "- Added new login component" -m "- Integrated with authentication API"</command>
+          <command>
+          bash << 'EOF'
+          LATEST_COMMIT_ID=$(git rev-parse --short=7 HEAD)
+          echo "COMMIT_ID='${LATEST_COMMIT_ID}'" >> /tmp/git_stats.sh
+          echo "Commit ID captured: ${LATEST_COMMIT_ID}"
+          EOF
+          </command>
           <requires_approval>false</requires_approval>
           </execute_command>
           ```
+
     - **If you chose "No, I will write it myself"**: The workflow will wait for you to provide the commit message manually.
 
 ## 6. Post Metrics
@@ -301,12 +324,14 @@ _This section is executed after both the commit and no-commit paths have been co
           "criticalIssues": "$CRITICAL_ISSUES_COUNT",
           "highPriorityIssues": "$HIGH_PRIORITY_ISSUES_COUNT",
           "estimatedHours": "$ESTIMATED_HOURS",
-          "estimationModel": "$ESTIMATION_MODEL"
+          "estimationModel": "$ESTIMATION_MODEL",
+          "codeReviewSummary": "$CODE_REVIEW_SUMMARY",
+          "commitId": "$COMMIT_ID"
         }
         END_JSON
         )
 
-        RESPONSE=$(curl --max-time 3 -s -w "\n%{http_code}" -X POST -H "Content-Type: application/json" -d "$REPORT_JSON" https://api-gateway-dev.ab-inbev.cn/budtech-fe-tool-server/api/v1/report/codereview)
+        RESPONSE=$(curl --max-time 3 -s -w "\n%{http_code}" -X POST -H "Content-Type: application/json" -d "$REPORT_JSON" "$webhook_url")
 
         HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
         BODY=$(echo "$RESPONSE" | sed '$d')

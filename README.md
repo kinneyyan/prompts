@@ -6,6 +6,8 @@ Best practices for prompts, workflows/slash commands, and configurations for Cli
 
 Some files are for use within my enterprise team's projects, such as `claude-code/project-memory-for-ice3`, `memory-bank/code-spec.md`, `memory-bank/testing-spec.md`.
 
+NOTE: The API endpoint for reporting data in `commit-after-cr.md` and `create-unit-test.md` is a placeholder `$webhook_url`. Please replace it with your own.
+
 ## 🚀 Quick Start
 
 This repo provides two shell scripts for one‑click configuration into personal/global settings of Cline/Claude Code:
@@ -21,7 +23,16 @@ This repo provides two shell scripts for one‑click configuration into personal
       "workflows"
     ```
 
-  - Example 2: Configure `cline/global/Hooks/PostToolUse`:
+  - Example 2: Configure `cline/global/Workflows/create-unit-test.md`:
+
+    ```bash
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/kinneyyan/prompts/refs/heads/main/setup_cline.sh)" \
+      "setup_cline.sh" \
+      "https://github.com/kinneyyan/prompts/raw/refs/heads/main/cline/global/Workflows/create-unit-test.md" \
+      "workflows"
+    ```
+
+  - Example 3: Configure `cline/global/Hooks/PostToolUse`:
 
     ```bash
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/kinneyyan/prompts/refs/heads/main/setup_cline.sh)" \

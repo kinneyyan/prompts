@@ -58,7 +58,7 @@ graph TD
 1.  **Analyze Changes**: Get a complete overview of all changes:
 
     ```bash
-    git status && git diff --no-pager
+    git status && git --no-pager diff
     ```
 
 2.  **Reference Project Context**: Read `README.md` and memory bank files for context:
@@ -76,8 +76,9 @@ graph TD
 
     ```bash
     bash << 'EOF'
-    # Part 1: Placeholder for changeset summary
-    CHANGESET_SUMMARY="Reviewed and analyzed code changes for commit."
+    # Part 1: Generate a changeset summary within 100 words and a code review summary within 300 words
+    CHANGESET_SUMMARY="Analyzed code changes for commit (within 100 words)"
+    CODE_REVIEW_SUMMARY="Summary of code review results (within 300 words)"
 
     # Part 2: Get branch and git user info
     CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
@@ -110,9 +111,11 @@ graph TD
     CRITICAL_ISSUES_COUNT=${CRITICAL_ISSUES_COUNT:-0}
     HIGH_PRIORITY_ISSUES_COUNT=${HIGH_PRIORITY_ISSUES_COUNT:-0}
 
-    # Part 5: Write to temp file
+    # Part 5: Write all variables to the temp file
     cat > /tmp/git_stats.sh <<INNER_EOF
     CHANGESET_SUMMARY='${CHANGESET_SUMMARY}'
+    CODE_REVIEW_SUMMARY='${CODE_REVIEW_SUMMARY}'
+    COMMIT_ID=''
     CURRENT_BRANCH='${CURRENT_BRANCH}'
     CREATED_BY='${CREATED_BY}'
     EMAIL='${EMAIL}'
@@ -174,10 +177,10 @@ If the user chooses "Proceed to commit":
           - Additionally, attach the code review report information after updating the entry in `./memory-bank/active-context.md`, using a Markdown code block with YAML format as shown below:
 
             ````markdown
-            - **[Current Date]**: [Brief Summary of Changes]
+            - **2025-12-18**: $CHANGESET_SUMMARY
 
               ```yaml
-              codeReviewSummary: <Summarize the results of this code review>
+              codeReviewSummary: $CODE_REVIEW_SUMMARY
               branch: $CURRENT_BRANCH
               createdBy: $CREATED_BY
               email: $EMAIL
@@ -199,12 +202,18 @@ If the user chooses "Proceed to commit":
       3. Execute commit:
          ```bash
          git commit -m "[Generated Message Title]" -m "[Generated Message Body]"
+         LATEST_COMMIT_ID=$(git rev-parse --short=7 HEAD)
+         echo "COMMIT_ID='${LATEST_COMMIT_ID}'" >> /tmp/git_stats.sh
+         echo "Commit ID captured: ${LATEST_COMMIT_ID}"
          ```
 
     - **If "Yes, commit with this message"**:
       Execute commit directly:
       ```bash
       git commit -m "[Generated Message Title]" -m "[Generated Message Body]"
+      LATEST_COMMIT_ID=$(git rev-parse --short=7 HEAD)
+      echo "COMMIT_ID='${LATEST_COMMIT_ID}'" >> /tmp/git_stats.sh
+      echo "Commit ID captured: ${LATEST_COMMIT_ID}"
       ```
     - **If "No, I will write it myself"**: Wait for manual input.
 
@@ -247,12 +256,14 @@ REPORT_JSON=$(cat <<END_JSON
   "criticalIssues": "$CRITICAL_ISSUES_COUNT",
   "highPriorityIssues": "$HIGH_PRIORITY_ISSUES_COUNT",
   "estimatedHours": "$ESTIMATED_HOURS",
-  "estimationModel": "$ESTIMATION_MODEL"
+  "estimationModel": "$ESTIMATION_MODEL",
+  "codeReviewSummary": "$CODE_REVIEW_SUMMARY",
+  "commitId": "$COMMIT_ID"
 }
 END_JSON
 )
 
-RESPONSE=$(curl --max-time 3 -s -w "\n%{http_code}" -X POST -H "Content-Type: application/json" -d "$REPORT_JSON" https://api-gateway-dev.ab-inbev.cn/budtech-fe-tool-server/api/v1/report/codereview)
+RESPONSE=$(curl --max-time 3 -s -w "\n%{http_code}" -X POST -H "Content-Type: application/json" -d "$REPORT_JSON" "$webhook_url")
 
 HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
 BODY=$(echo "$RESPONSE" | sed '$d')

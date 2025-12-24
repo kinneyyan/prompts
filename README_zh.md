@@ -6,6 +6,8 @@
 
 部分文件为针对本人企业团队内的项目使用，例如 `claude-code/project-memory-for-ice3`、`memory-bank/code-spec.md`、`memory-bank/testing-spec.md`。
 
+NOTE: `commit-after-cr.md` 和 `create-unit-test.md` 中上报数据的 API 端点为一个占位符 $webhook_url，请自行替换
+
 ## 🚀 快速开始
 
 本 repo 提供了两个 shell 脚本提供一键配置到 Cline/Claude Code 的个人/全局配置中：
@@ -21,7 +23,16 @@
       "workflows"
     ```
 
-  - 示例二： 配置 `cline/global/Hooks/PostToolUse` ：
+  - 示例二: 配置 `cline/global/Workflows/create-unit-test.md`:
+
+    ```bash
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/kinneyyan/prompts/refs/heads/main/setup_cline.sh)" \
+      "setup_cline.sh" \
+      "https://github.com/kinneyyan/prompts/raw/refs/heads/main/cline/global/Workflows/create-unit-test.md" \
+      "workflows"
+    ```
+
+  - 示例三： 配置 `cline/global/Hooks/PostToolUse` ：
 
     ```bash
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/kinneyyan/prompts/refs/heads/main/setup_cline.sh)" \
