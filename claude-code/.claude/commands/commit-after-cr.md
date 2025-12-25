@@ -5,7 +5,7 @@ allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git commit:*), Bash(gi
 
 # Git Commit After Code Review
 
-This workflow analyzes your changes, runs pre-commit quality checks, updates the project's memory bank, and then follows a conditional path. If you choose not to commit, a review report is sent immediately. If you choose to commit, the report is sent only after all commit operations are successfully completed.
+I'll analyzes your changes, runs pre-commit quality checks, updates the project's memory bank, and then follows a conditional path. If you choose not to commit, a review report is sent immediately. If you choose to commit, the report is sent only after all commit operations are successfully completed.
 
 ## 0. Workflow Overview Diagram
 
@@ -200,21 +200,31 @@ If the user chooses "Proceed to commit":
       ```
 
       3. Execute commit:
+
          ```bash
+         bash << 'EOF'
+         # Execute Commit
          git commit -m "[Generated Message Title]" -m "[Generated Message Body]"
+         # Get the latest commit ID
          LATEST_COMMIT_ID=$(git rev-parse --short=7 HEAD)
          echo "COMMIT_ID='${LATEST_COMMIT_ID}'" >> /tmp/git_stats.sh
          echo "Commit ID captured: ${LATEST_COMMIT_ID}"
+         EOF
          ```
 
     - **If "Yes, commit with this message"**:
+
       Execute commit directly:
+
       ```bash
+      bash << 'EOF'
       git commit -m "[Generated Message Title]" -m "[Generated Message Body]"
       LATEST_COMMIT_ID=$(git rev-parse --short=7 HEAD)
       echo "COMMIT_ID='${LATEST_COMMIT_ID}'" >> /tmp/git_stats.sh
       echo "Commit ID captured: ${LATEST_COMMIT_ID}"
+      EOF
       ```
+
     - **If "No, I will write it myself"**: Wait for manual input.
 
 The commit message will be concise, meaningful, and follow your project's conventions if I can detect them from recent commits.

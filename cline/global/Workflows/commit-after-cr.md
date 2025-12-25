@@ -259,9 +259,11 @@ _This section is executed if the user chose "Proceed to commit"._
 
           ```xml
           <execute_command>
-          <command>git commit -m "feat(auth): implement user login functionality" -m "- Added new login component" -m "- Integrated with authentication API"</command>
           <command>
           bash << 'EOF'
+          # Execute Commit
+          git commit -m "feat(auth): implement user login functionality" -m "- Added new login component" -m "- Integrated with authentication API"
+          # Get the latest commit ID
           LATEST_COMMIT_ID=$(git rev-parse --short=7 HEAD)
           echo "COMMIT_ID='${LATEST_COMMIT_ID}'" >> /tmp/git_stats.sh
           echo "Commit ID captured: ${LATEST_COMMIT_ID}"
@@ -277,9 +279,11 @@ _This section is executed if the user chose "Proceed to commit"._
 
           ```xml
           <execute_command>
-          <command>git commit -m "feat(auth): implement user login functionality" -m "- Added new login component" -m "- Integrated with authentication API"</command>
           <command>
           bash << 'EOF'
+          # Execute Commit
+          git commit -m "feat(auth): implement user login functionality" -m "- Added new login component" -m "- Integrated with authentication API"
+          # Get the latest commit ID
           LATEST_COMMIT_ID=$(git rev-parse --short=7 HEAD)
           echo "COMMIT_ID='${LATEST_COMMIT_ID}'" >> /tmp/git_stats.sh
           echo "Commit ID captured: ${LATEST_COMMIT_ID}"
