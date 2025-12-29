@@ -3,30 +3,44 @@
     {
       "name": "modelscope",
       "api_base_url": "https://api-inference.modelscope.cn/v1/chat/completions",
-      "api_key": "sk-xxx",
+      "api_key": "ms-REDACTED-KEY-PLACEHOLDER",
       "models": [
         "Qwen/Qwen3-Coder-30B-A3B-Instruct",
         "Qwen/Qwen3-Coder-480B-A35B-Instruct",
-        "ZhipuAI/GlM-4.6",
-        "deepseek-ai/DeepSeek-V3.1"
+        "Qwen/Qwen3-235B-A22B-Instruct-2507",
+        "Qwen/Qwen3-235B-A22B-Thinking-2507",
+        "deepseek-ai/DeepSeek-V3.2",
+        "ZhipuAI/GLM-4.7",
+        "MiniMax/MiniMax-M2.1"
       ],
       "transformer": {
         "use": [["maxtoken", { "max_tokens": 65536 }]],
-        "Qwen/Qwen3-Coder-30B-A3B-Instruct": {
-          "use": ["enhancetool"]
-        },
-        "Qwen/Qwen3-Coder-480B-A35B-Instruct": {
-          "use": ["enhancetool"]
-        },
-        "ZhipuAI/GlM-4.6": {
-          "use": ["reasoning"]
-        }
+        "Qwen/Qwen3-Coder-30B-A3B-Instruct": { "use": ["enhancetool"] },
+        "Qwen/Qwen3-Coder-480B-A35B-Instruct": { "use": ["enhancetool"] },
+        "Qwen/Qwen3-235B-A22B-Instruct-2507": { "use": ["enhancetool"] },
+        "Qwen/Qwen3-235B-A22B-Thinking-2507": { "use": ["enhancetool", "reasoning"] },
+        "deepseek-ai/DeepSeek-V3.2": { "use": ["tooluse"] }
       }
+    },
+    {
+      "name": "dashscope",
+      "api_base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+      "api_key": "sk-REDACTED-KEY-PLACEHOLDER",
+      "models": ["qwen3-max"],
+      "transformer": {
+        "use": [["maxtoken", { "max_tokens": 65536 }], "enhancetool"]
+      }
+    },
+    {
+      "name": "aihubmix",
+      "api_base_url": "https://aihubmix.com/v1/chat/completions",
+      "api_key": "sk-REDACTED-KEY-PLACEHOLDER",
+      "models": ["coding-minimax-m2-free", "coding-glm-4.7-free", "kimi-for-coding-free"]
     },
     {
       "name": "gemini",
       "api_base_url": "https://generativelanguage.googleapis.com/v1beta/models/",
-      "api_key": "sk-xxx",
+      "api_key": "AIza-REDACTED-KEY-PLACEHOLDER",
       "models": ["gemini-2.5-flash", "gemini-2.5-pro"],
       "transformer": {
         "use": ["gemini"]
@@ -34,10 +48,10 @@
     }
   ],
   "Router": {
-    "default": "modelscope,ZhipuAI/GlM-4.6",
-    "background": "modelscope,Qwen/Qwen3-Coder-30B-A3B-Instruct",
-    "think": "modelscope,ZhipuAI/GlM-4.6",
-    "longContext": "modelscope,Qwen/Qwen3-Coder-480B-A35B-Instruct",
+    "default": "modelscope,ZhipuAI/GLM-4.7",
+    "background": "dashscope,qwen3-max",
+    "think": "modelscope,ZhipuAI/GLM-4.7",
+    "longContext": "dashscope,qwen3-max",
     "webSearch": "gemini,gemini-2.5-flash"
   }
 }
