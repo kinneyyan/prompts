@@ -9,9 +9,7 @@
         "Qwen/Qwen3-Coder-480B-A35B-Instruct",
         "Qwen/Qwen3-235B-A22B-Instruct-2507",
         "Qwen/Qwen3-235B-A22B-Thinking-2507",
-        "deepseek-ai/DeepSeek-V3.2",
-        "ZhipuAI/GLM-4.7",
-        "MiniMax/MiniMax-M2.1"
+        "deepseek-ai/DeepSeek-V3.2"
       ],
       "transformer": {
         "use": [["maxtoken", { "max_tokens": 65536 }]],
@@ -48,9 +46,9 @@
     }
   ],
   "Router": {
-    "default": "modelscope,ZhipuAI/GLM-4.7",
+    "default": "aihubmix,coding-glm-4.7-free",
     "background": "dashscope,qwen3-max",
-    "think": "modelscope,ZhipuAI/GLM-4.7",
+    "think": "aihubmix,coding-glm-4.7-free",
     "longContext": "dashscope,qwen3-max",
     "webSearch": "gemini,gemini-2.5-flash"
   }
