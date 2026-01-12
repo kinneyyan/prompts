@@ -73,6 +73,8 @@ This repo provides two shell scripts for one‑click configuration into personal
 │   │   └── settings.json # Personal common configuration for Claude Code
 │   ├── claude-code-router
 │   │   └── config.json # Personal common configuration for claude-code-router
+│   ├── plugins # Claude Code Plugin
+│   │   └── frontend-big-brother
 │   └── project-memory-for-ice3 # Memory files for ice.js3 projects
 ├── cline # Cline related
 │   ├── global # Global hooks, rules, workflows
