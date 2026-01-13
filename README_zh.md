@@ -73,6 +73,8 @@ NOTE: `commit-after-cr.md` 和 `create-unit-test.md` 中上报数据的 API 端�
 │   │   └── settings.json # Claude Code 个人常用配置
 │   ├── claude-code-router
 │   │   └── config.json # claude-code-router 的个人常用配置
+│   ├── plugins # Claude Code Plugin
+│   │   └── frontend-big-brother
 │   └── project-memory-for-ice3 # 适用于 ice.js3 项目的内存文件
 ├── cline # Cline 相关
 │   ├── global # 全局的 hooks、rules、workflows
