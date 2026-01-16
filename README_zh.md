@@ -4,7 +4,7 @@
 
 一些 Cline 和 Claude Code 的提示词、工作流/斜杠命令和配置的最佳实践。
 
-部分文件为针对本人企业团队内的项目使用，例如 `claude-code/project-memory-for-ice3`、`memory-bank/code-spec.md`、`memory-bank/testing-spec.md`。
+部分文件为针对本人企业团队内的项目使用，例如 `claude-code/project-memory-for-ice3`、`memory-bank/code-spec.md`、`memory-bank/testing-spec.md`、`skills/code-review`、`skills/metrics-report`。
 
 NOTE: `commit-after-cr.md` 和 `create-unit-test.md` 中上报数据的 API 端点为一个占位符 $webhook_url，请自行替换
 
@@ -85,9 +85,12 @@ NOTE: `commit-after-cr.md` 和 `create-unit-test.md` 中上报数据的 API 端�
 │       ├── Rules
 │       │   └── memory-bank.md # 在 Cline 原版基础上添加了 `code-spec.md` 和 `testing-spec.md`
 │       └── Workflows
-└── memory-bank # 内存库
-    ├── code-spec.md # 代码规约
-    └── testing-spec.md # 单元测试编写规范 (EARS 格式)
+├── memory-bank # 内存库
+│   ├── code-spec.md # 代码规约
+│   └── testing-spec.md # 单元测试编写规范 (EARS 格式)
+└── skills
+    ├── code-review # 代码审查技能
+    └── metrics-report # 指标数据上报技能
 ```
 
 ## 📝 参考链接

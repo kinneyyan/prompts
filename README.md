@@ -85,9 +85,12 @@ This repo provides two shell scripts for one‑click configuration into personal
 │       ├── Rules
 │       │   └── memory-bank.md # Added `code-spec.md` and `testing-spec.md` on top of the original Cline memory bank
 │       └── Workflows
-└── memory-bank # Memory Bank
-    ├── code-spec.md # Code Specification
-    └── testing-spec.md # Unit Test Writing Specification (EARS format)
+├── memory-bank # Memory Bank
+│   ├── code-spec.md # Code Specification
+│   └── testing-spec.md # Unit Test Writing Specification (EARS format)
+└── skills
+    ├── code-review
+    └── metrics-report
 ```
 
 ## 📝 Reference Links

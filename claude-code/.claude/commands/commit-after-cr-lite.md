@@ -1,100 +1,38 @@
+---
+description: Review the changes, create a git commit if the review passed and post metrics data finally
+allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git commit:*), Bash(git add:*)
+---
+
 # Git Commit After Code Review
 
-I'll analyze your changes and perform a code review. If the review passes, I will create a meaningful commit message.
+This workflow helps me review the changes, create a git commit if the review passed and post metrics data finally.
 
-**Pre-Commit Quality Checks:**
-Before committing, I'll verify:
+## 1. Review the changes and collect metrics data
 
-- No obvious errors in changed files
-- Code review passes (using project architecture & spec references)
+Using the `code-review` skill to review the changes and collect metrics data.
 
-First, let me check if this is a git repository and what's changed:
+Always use the script from the skill directory to collect metrics, **don't write it myself**.
 
-```bash
-# Verify we're in a git repository
-if ! git rev-parse --git-dir > /dev/null 2>&1; then
-    echo "Error: Not a git repository"
-    echo "This command requires git version control"
-    exit 1
-fi
+## 2. Display the review results and determine if the review passed
 
-# Check if we have changes to commit
-if ! git diff --cached --quiet || ! git diff --quiet; then
-    echo "Changes detected:"
-    git status --short
-else
-    echo "No changes to commit"
-    exit 0
-fi
-
-# Show detailed changes
-git diff --cached --stat
-git diff --stat
-```
-
-Now I'll analyze the changes to determine:
-
-1. What files were modified
-2. The nature of changes (feature, fix, refactor, etc.)
-3. The scope/component affected
-
-If the analysis or commit encounters errors:
-
-- I'll explain what went wrong
-- Suggest how to resolve it
-- Ensure no partial commits occur
-
-```bash
-# If nothing is staged, I'll stage modified files (not untracked)
-if git diff --cached --quiet; then
-    echo "No files staged. Staging modified files..."
-    git add -u
-fi
-
-# Show what will be committed
-git diff --cached --name-status
-```
-
-Based on the analysis, I'll perform a code review:
-
-1. Understand the architecture from @memory-bank/project-brief.md and @README.md
-2. Understand the coding conventions from @memory-bank/code-spec.md
-3. Execute code review using 3-tier severity system:
-
-#### 🚨 CRITICAL (Must fix)
-
-- Configuration changes risking outages
-- Security vulnerabilities
-- Data loss risks
-- Breaking changes
-
-#### ⚠️ HIGH PRIORITY (Should fix)
-
-- Performance degradation risks
-- Maintainability issues
-- Missing error handling
-
-#### 💡 SUGGESTIONS (Consider)
-
-- Code style improvements
-- Optimization opportunities
-- Additional test coverage
+Display the output from the skill.
 
 Then determine if the code review passes based on the following conditions:
 
 - **Review Passed**: If no `CRITICAL` issues are found.
 - **Review Failed**: If any `CRITICAL` issues are detected.
 
-If **Review Passed**, I'll create a conventional commit message:
-
-- **Type**: feat|fix|docs|style|refactor|test|chore
-- **Scope**: component or area affected (optional)
-- **Subject**: clear description in present tense
-- **Body**: why the change was made (if needed)
+If **Review Passed**, I'll create a conventional commit message and get the latest commit ID:
 
 ```bash
-# I'll create the commit with the analyzed message
-# Example: git commit -m "fix(auth): resolve login timeout issue"
+# Stage all changes including new files
+git add --all
+# Execute Commit (Example)
+git commit -m "$(printf 'feat(scope): brief summary of changes\n\n- First point\n- Second point\n- Third point')"
+# Get the latest commit ID
+LATEST_COMMIT_ID=$(git rev-parse --short=7 HEAD)
+echo "COMMIT_ID='${LATEST_COMMIT_ID}'" >> /tmp/metrics_code-review.sh
+echo "Commit ID captured: ${LATEST_COMMIT_ID}"
 ```
 
 The commit message will be concise, meaningful, and follow your project's conventions if I can detect them from recent commits.
@@ -108,3 +46,9 @@ The commit message will be concise, meaningful, and follow your project's conven
 - Use emojis in commits, PRs, or git-related content
 
 The commit will use only your existing git user configuration, maintaining full ownership and authenticity of your commits.
+
+## 3. Post metrics regardless of whether the review is passed
+
+Using the `metrics-report` skill to post metrics data.
+
+If the output of the skill indicates that the temporary file does not exist or is empty, try using the tool script in the `code-review` skill again (retry only once). If the tool script executes successfully, then retry the metrics reporting.
