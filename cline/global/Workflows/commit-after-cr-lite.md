@@ -10,14 +10,9 @@ Always use the script from the skill directory to collect metrics, **don't write
 
 ## 2. Display the review results and request decision
 
-```xml
-<ask_followup_question>
-<question>
-What would you like to do next?
-</question>
-<options>["Create a Git commit", "Do not commit, I will fix the issues"]</options>
-</ask_followup_question>
-```
+1. Display the review results
+2. Ask: "What would you like to do next?"
+   Options: `Create a Git commit`、`Do not commit, I will fix the issues`
 
 ## 3. Create a Git commit based on the user's decision
 
@@ -50,6 +45,8 @@ The commit message will be concise, meaningful, and follow your project's conven
 Proceed to the next step directly.
 
 ## 4. Post metrics
+
+_This section is executed regardless of whether the user chooses to submit._
 
 Using the `metrics-report` skill to post metrics data.
 

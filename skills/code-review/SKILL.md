@@ -65,7 +65,6 @@ The skill follows this workflow and **adds the following process nodes to the cu
    ```
 
    The script:
-
    - Receive four metrics data parameters
    - Collect other information of the current repo
    - Save all metrics data to a temporary file

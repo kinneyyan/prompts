@@ -1,11 +1,11 @@
 ---
-description: Review the changes, create a git commit if the review passed and post metrics data finally
+description: Review the changes, create a git commit based on the user's decision and post metrics data finally
 allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git commit:*), Bash(git add:*)
 ---
 
 # Git Commit After Code Review
 
-This workflow helps me review the changes, create a git commit if the review passed and post metrics data finally.
+This workflow helps me review the changes, create a git commit based on the user's decision and post metrics data finally.
 
 ## 1. Review the changes and collect metrics data
 
@@ -13,16 +13,17 @@ Using the `code-review` skill to review the changes and collect metrics data.
 
 Always use the script from the skill directory to collect metrics, **don't write it myself**.
 
-## 2. Display the review results and determine if the review passed
+## 2. Display the review results and request decision
 
-Display the output from the skill.
+1. Display the review results
+2. Ask: "What would you like to do next?"
+   Options: `1. Create a Git commit`、`2. Do not commit, I will fix the issues`
 
-Then determine if the code review passes based on the following conditions:
+## 3. Create a Git commit based on the user's decision
 
-- **Review Passed**: If no `CRITICAL` issues are found.
-- **Review Failed**: If any `CRITICAL` issues are detected.
+### Case 1: When user chose "Create a Git commit"
 
-If **Review Passed**, I'll create a conventional commit message and get the latest commit ID:
+create a conventional commit message and get the latest commit ID:
 
 ```bash
 # Stage all changes including new files
@@ -47,7 +48,13 @@ The commit message will be concise, meaningful, and follow your project's conven
 
 The commit will use only your existing git user configuration, maintaining full ownership and authenticity of your commits.
 
-## 3. Post metrics regardless of whether the review is passed
+### Case 2: When user chose "Do not commit, I will fix the issues"
+
+Proceed to the next step directly.
+
+## 4. Post metrics
+
+_This section is executed regardless of whether the user chooses to submit._
 
 Using the `metrics-report` skill to post metrics data.
 

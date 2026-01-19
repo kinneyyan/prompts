@@ -3,6 +3,13 @@
 
 set -e
 
+# Part 0: Load environment variables from .env file (if exists)
+if [ -f "$(dirname "$0")/.env" ]; then
+    set -a  # Auto-export loaded variables
+    source "$(dirname "$0")/.env"
+    set +a
+fi
+
 is_absolute_call() {
   SCRIPT_CALL_PATH="$0"
   
@@ -45,16 +52,51 @@ CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 CREATED_BY=$(git config user.name)
 EMAIL=$(git config user.email)
 
+# Part 2.5: Configure files to ignore (space-separated patterns)
+IGNORE_FILES=${IGNORE_FILES:-""}
+
+# Build ignore pattern for awk (escape special chars and join with |)
+build_ignore_pattern() {
+    local pattern=""
+    for file in $IGNORE_FILES; do
+        # Escape special regex characters: . * + ? { } [ ] ^ $ \ |
+        local escaped=$(echo "$file" | sed 's/[.*+?{}()^$|[]/\\&/g')
+        if [ -z "$pattern" ]; then
+            pattern="$escaped"
+        else
+            pattern="$pattern|$escaped"
+        fi
+    done
+    echo "$pattern"
+}
+
+IGNORE_PATTERN=$(build_ignore_pattern)
+
 # Part 3: Get file and line change statistics
-read -r tracked_files tracked_additions tracked_deletions <<_EOF_
+if [ -n "$IGNORE_PATTERN" ]; then
+    # Filter out ignored files using awk pattern matching on filename (column 3)
+    read -r tracked_files tracked_additions tracked_deletions <<_EOF_
+$( (git diff --numstat 2>/dev/null; git diff --cached --numstat 2>/dev/null) | awk -v ignore="$IGNORE_PATTERN" '
+$3 !~ ignore { files += 1; additions += $1; deletions += $2 }
+END { print files+0, additions+0, deletions+0 }
+')
+_EOF_
+else
+    # No ignore pattern set, use original logic
+    read -r tracked_files tracked_additions tracked_deletions <<_EOF_
 $( (git diff --numstat 2>/dev/null; git diff --cached --numstat 2>/dev/null) | awk '
 { files += 1; additions += $1; deletions += $2 }
 END { print files+0, additions+0, deletions+0 }
 ')
 _EOF_
+fi
 
 # Handle untracked files
-untracked_files_list=$(git ls-files --others --exclude-standard)
+if [ -n "$IGNORE_PATTERN" ]; then
+    untracked_files_list=$(git ls-files --others --exclude-standard | awk -v ignore="$IGNORE_PATTERN" '$0 !~ ignore')
+else
+    untracked_files_list=$(git ls-files --others --exclude-standard)
+fi
 untracked_count=0
 untracked_lines=0
 if [ -n "$untracked_files_list" ]; then

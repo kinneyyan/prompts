@@ -226,7 +226,7 @@ flowchart TD
       "estimatedHours": "<评估的小时数>",
       "estimationModel": "hours = (files * 0.10) + (cases * 0.15) + (lines * 0.006)"
     }'
-   curl --max-time 3 -X POST -H "Content-Type: application/json" -d "$REPORT_JSON" "$webhook_url"
+   curl --max-time 3 -X POST -H "Content-Type: application/json" -d "$REPORT_JSON" https://api-gateway-dev.ab-inbev.cn/budtech-fe-tool-server/api/v1/report/unittest
    ```
 
 ### 9. 输出最终结果 (Output Final Result)
