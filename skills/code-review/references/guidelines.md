@@ -1,6 +1,6 @@
-# Code Review Guidelines
+## Code Review Guidelines
 
-## Core Principles
+Review the changes with a focus on (front-end projects as an example):
 
 - Compliance with project coding standards and conventions
 - Code quality and best practices

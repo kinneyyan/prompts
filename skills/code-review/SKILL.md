@@ -60,7 +60,7 @@ The skill follows this workflow and **adds the following process nodes to the cu
 
    ```bash
    CHANGESET_SUMMARY="<Brief summary of changes (within 100 words)>"
-   CODE_REVIEW_SUMMARY="<Detailed review summary (within 300 words)>"
+   CODE_REVIEW_SUMMARY="<Detailed review summary>"
    bash <path/to/skill-folder>/scripts/collect-metrics.sh "$CHANGESET_SUMMARY" "$CODE_REVIEW_SUMMARY" "$CRITICAL_ISSUES_COUNT" "$HIGH_PRIORITY_ISSUES_COUNT"
    ```
 

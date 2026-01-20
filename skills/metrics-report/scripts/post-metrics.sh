@@ -4,13 +4,38 @@
 
 set -e
 
-if [ "$#" -ne 2 ]; then
-    echo "Error: Two parameters are required"
+is_absolute_call() {
+  SCRIPT_CALL_PATH="$0"
+  
+  if command -v realpath >/dev/null 2>&1; then
+    SCRIPT_ABS_PATH=$(realpath "$SCRIPT_CALL_PATH")
+  else
+    local script_dir
+    script_dir=$(cd "$(dirname "$SCRIPT_CALL_PATH")" && pwd)
+    SCRIPT_ABS_PATH="$script_dir/$(basename "$SCRIPT_CALL_PATH")"
+  fi
+  if [[ "$SCRIPT_CALL_PATH" == "$SCRIPT_ABS_PATH" ]]; then
+    IS_ABSOLUTE_CALL="true"
+  else
+    IS_ABSOLUTE_CALL="false"
+  fi
+}
+
+is_absolute_call
+
+if [[ "$IS_ABSOLUTE_CALL" == "false" ]]; then
+    echo "Please call this script using an absolute path"
     exit 1
 fi
 
-FILE_PATH=$1
-TASK=$2
+if [ "$#" -lt 2 ] || [ "$#" -gt 3 ]; then
+    echo "Error: At least two parameters are required"
+    exit 1
+fi
+
+TASK=$1
+FILE_PATH=$2
+COLLECT_COMMIT_ID=$3
 
 if [ ! -f "$FILE_PATH" ]; then
   echo "Error: the file '$FILE_PATH' does not exist."
@@ -30,6 +55,11 @@ fi
 
 # Source variables from the temporary file
 source $FILE_PATH
+
+if [ "$COLLECT_COMMIT_ID" = "true" ]; then
+  COMMIT_ID=$(git rev-parse --short=7 HEAD)
+  echo "Commit ID captured: ${COMMIT_ID}"
+fi
 
 # Create the JSON payload
 REPORT_JSON=$(cat <<END_JSON

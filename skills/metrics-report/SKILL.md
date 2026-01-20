@@ -30,10 +30,12 @@ metrics-report/
 
 ## Usage Workflow
 
-Run the `scripts/check-file-exists.sh` script:
+Run the `scripts/post-metrics.sh` script:
 
 ```bash
-bash scripts/post-metrics.sh <temporary file path> <task>
+# If the user just created a git commit, pass COLLECT_COMMIT_ID to the script to tell it to collect the latest commit ID
+COLLECT_COMMIT_ID="true"
+bash <path/to/skill-folder>/scripts/post-metrics.sh <task> <temporary file path> "$COLLECT_COMMIT_ID"
 ```
 
 The script:

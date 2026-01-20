@@ -18,7 +18,7 @@ Always use the script from the skill directory to collect metrics, **don't write
 
 ### Case 1: When user chose "Create a Git commit"
 
-create a conventional commit message and get the latest commit ID:
+Create a conventional commit message:
 
 ```xml
 <execute_command>
@@ -28,10 +28,6 @@ bash << 'EOF'
 git add --all
 # Execute Commit (Example)
 git commit -m "$(printf 'feat(scope): brief summary of changes\n\n- First point\n- Second point\n- Third point')"
-# Get the latest commit ID
-LATEST_COMMIT_ID=$(git rev-parse --short=7 HEAD)
-echo "COMMIT_ID='${LATEST_COMMIT_ID}'" >> /tmp/metrics_code-review.sh
-echo "Commit ID captured: ${LATEST_COMMIT_ID}"
 EOF
 </command>
 <requires_approval>false</requires_approval>
