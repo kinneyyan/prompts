@@ -9,8 +9,8 @@ This skill handles posting metrics and statistics to a reporting endpoint. It as
 
 The temporary file path depends on the task from the context:
 
-- code-review: `/tmp/metrics_code-review.sh`
-- create-unit-test: `/tmp/metrics_unit-test.sh`
+- code-review: `/tmp/metrics_code-review_<repo-name>.sh`
+- create-unit-test: `/tmp/metrics_unit-test_<repo-name>.sh`
 
 ## File Structure
 
@@ -23,7 +23,7 @@ metrics-report/
 
 ## Core Functionality
 
-1. Source the metrics data from the temporary file
+1. Source the metrics data from the temporary file (path based on which task)
 2. Format the data into a JSON payload
 3. Send the payload to the reporting API endpoint
 4. Handle the response and provide feedback on success or failure
@@ -35,12 +35,13 @@ Run the `scripts/post-metrics.sh` script:
 ```bash
 # If the user just created a git commit, pass COLLECT_COMMIT_ID to the script to tell it to collect the latest commit ID
 COLLECT_COMMIT_ID="true"
-bash <path/to/skill-folder>/scripts/post-metrics.sh <task> <temporary file path> "$COLLECT_COMMIT_ID"
+bash <path/to/skill-folder>/scripts/post-metrics.sh <task> "$COLLECT_COMMIT_ID"
 ```
 
 The script:
 
-- Check if the specified file exists
+- Determine the path of the temporary file to be retrieved based on which task
+- Check if the temporary file exists
 - Post metrics data if the file exists
   - Sourcing the metrics data
   - Formatting the JSON payload

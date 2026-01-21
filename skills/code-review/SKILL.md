@@ -122,7 +122,7 @@ When presenting findings, exactly follow one of the two templates:
 
 ### 4. Integration Notes
 
-- The skill stores temporary data in `/tmp/metrics_code-review.sh`
+- The skill stores temporary data in `/tmp/metrics_code-review_<repo-name>.sh`
 - All scripts are designed to be idempotent and safe to run multiple times
 
 ### 5. When to Use This Skill

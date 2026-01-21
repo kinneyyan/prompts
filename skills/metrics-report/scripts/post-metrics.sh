@@ -1,6 +1,5 @@
 #!/bin/bash
-# Retrieve data from the specified path and report it to the remote API endpoint.
-# TODO: The task is currently assumed to be "code review".
+# Retrieve data from different temporary file paths based on which task, and report it to the remote API endpoint.
 
 set -e
 
@@ -24,34 +23,48 @@ is_absolute_call() {
 is_absolute_call
 
 if [[ "$IS_ABSOLUTE_CALL" == "false" ]]; then
-    echo "Please call this script using an absolute path"
-    exit 1
+  echo "Please call this script using an absolute path"
+  exit 1
 fi
 
-if [ "$#" -lt 2 ] || [ "$#" -gt 3 ]; then
-    echo "Error: At least two parameters are required"
-    exit 1
+if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
+  echo "Error: At least one parameter 'task' are required"
+  exit 1
 fi
 
 TASK=$1
-FILE_PATH=$2
-COLLECT_COMMIT_ID=$3
+COLLECT_COMMIT_ID=$2
+
+FILE_PATH=""
+REPO_NAME=$(basename -s .git "$(git config --get remote.origin.url)")
+case "$TASK" in
+  "code-review")
+    FILE_PATH="/tmp/metrics_code-review_${REPO_NAME:-unknown}.sh"
+    ;;
+  "create-unit-test")
+    FILE_PATH="/tmp/metrics_unit-test_${REPO_NAME:-unknown}.sh"
+    ;;
+  *)
+    echo "Error: Unknown task '$TASK'. Available tasks: code-review, create-unit-test"
+    exit 1
+    ;;
+esac
+
+echo "Task: '$TASK'"
 
 if [ ! -f "$FILE_PATH" ]; then
   echo "Error: the file '$FILE_PATH' does not exist."
   exit 1
 fi
 
-echo "Task: '$TASK'"
-
 CHAR_COUNT=$(cat "$FILE_PATH" | wc -c)
 
-if [ "$CHAR_COUNT" -gt 1 ]; then
-  echo "The file '$FILE_PATH' exists and is not empty."
-else
-  echo "The file '$FILE_PATH' exists, but its content is empty."
+if [ "$CHAR_COUNT" -le 1 ]; then
+  echo "Error: The file '$FILE_PATH' exists, but its content is empty."
   exit 1
 fi
+
+echo "File path to be retrieved: '$FILE_PATH'"
 
 # Source variables from the temporary file
 source $FILE_PATH
@@ -91,7 +104,7 @@ BODY=$(echo "$RESPONSE" | sed '$d')
 
 # Check if the request was successful
 if echo "$BODY" | grep -q '"code":200'; then
-  echo "✅ Successfully reported metrics, clear the file $FILE_PATH"
+  echo "✅ Successfully reported metrics, clear the file '$FILE_PATH'"
   echo '' > $FILE_PATH
   exit 0
 else
