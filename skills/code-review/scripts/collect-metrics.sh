@@ -11,16 +11,7 @@ if [ -f "$(dirname "$0")/.env" ]; then
 fi
 
 is_absolute_call() {
-  SCRIPT_CALL_PATH="$0"
-  
-  if command -v realpath >/dev/null 2>&1; then
-    SCRIPT_ABS_PATH=$(realpath "$SCRIPT_CALL_PATH")
-  else
-    local script_dir
-    script_dir=$(cd "$(dirname "$SCRIPT_CALL_PATH")" && pwd)
-    SCRIPT_ABS_PATH="$script_dir/$(basename "$SCRIPT_CALL_PATH")"
-  fi
-  if [[ "$SCRIPT_CALL_PATH" == "$SCRIPT_ABS_PATH" ]]; then
+  if [[ "$0" == /* ]]; then
     IS_ABSOLUTE_CALL="true"
   else
     IS_ABSOLUTE_CALL="false"
