@@ -13,7 +13,6 @@ NOTE: `commit-after-cr.md` 和 `create-unit-test.md` 中上报数据的 API 端�
 本 repo 提供了两个 shell 脚本提供一键配置到 Cline/Claude Code 的个人/全局配置中：
 
 - 给 Cline 配置 hooks、rules、workflows
-
   - 示例一：配置 `cline/global/Workflows/commit-after-cr.md` ：
 
     ```bash
@@ -42,7 +41,6 @@ NOTE: `commit-after-cr.md` 和 `create-unit-test.md` 中上报数据的 API 端�
     ```
 
 - 给 Claude Code 配置 sub-agents、slash-commands
-
   - 示例一： 配置 `claude-code/.claude/commands/commit-after-cr.md` ：
 
     ```bash
@@ -67,30 +65,31 @@ NOTE: `commit-after-cr.md` 和 `create-unit-test.md` 中上报数据的 API 端�
 .
 ├── claude-code # Claude Code 相关
 │   ├── .claude
-│   │   ├── agents # sub-agents
-│   │   ├── commands # slash-commands。部分取自 https://github.com/brennercruvinel/CCPlugins/tree/main/commands
-│   │   ├── hooks # hooks
+│   │   ├── agents        # sub-agents
+│   │   ├── commands      # slash-commands。部分取自 https://github.com/brennercruvinel/CCPlugins/tree/main/commands
+│   │   ├── hooks         # hooks
 │   │   └── settings.json # Claude Code 个人常用配置
 │   ├── claude-code-router
-│   │   └── config.json # claude-code-router 的个人常用配置
-│   ├── plugins # Claude Code Plugin
+│   │   └── config.json   # claude-code-router 的个人常用配置
+│   ├── plugins           # Claude Code Plugin
 │   │   └── frontend-big-brother
 │   └── project-memory-for-ice3 # 适用于 ice.js3 项目的内存文件
 ├── cline # Cline 相关
-│   ├── global # 全局的 hooks、rules、workflows
+│   ├── global       # 全局的 hooks、rules、workflows
 │   │   ├── Hooks
 │   │   ├── Rules
 │   │   └── Workflows
-│   └── workspace # 项目级别的 hooks、rules、workflows
+│   └── workspace    # 项目级别的 hooks、rules、workflows
 │       ├── Rules
 │       │   └── memory-bank.md # 在 Cline 原版基础上添加了 `code-spec.md` 和 `testing-spec.md`
 │       └── Workflows
-├── memory-bank # 内存库
-│   ├── code-spec.md # 代码规约
+├── memory-bank
+│   ├── code-spec.md    # 代码规约
 │   └── testing-spec.md # 单元测试编写规范 (EARS 格式)
 └── skills
-    ├── code-review # 代码审查技能
-    └── metrics-report # 指标数据上报技能
+    ├── code-review                   # 代码审查技能
+    ├── ice-js-3-development-patterns # 前端 ice.js 3 项目开发模式
+    └── metrics-report                # 指标数据上报技能
 ```
 
 ## 📝 参考链接

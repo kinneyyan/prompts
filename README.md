@@ -13,7 +13,6 @@ NOTE: The API endpoint for reporting data in `commit-after-cr.md` and `create-un
 This repo provides two shell scripts for one‑click configuration into personal/global settings of Cline/Claude Code:
 
 - Configure hooks, rules, workflows for Cline
-
   - Example 1: Configure `cline/global/Workflows/commit-after-cr.md`:
 
     ```bash
@@ -42,7 +41,6 @@ This repo provides two shell scripts for one‑click configuration into personal
     ```
 
 - Configure sub-agents, slash-commands for Claude Code
-
   - Example 1: Configure `claude-code/.claude/commands/commit-after-cr.md`:
 
     ```bash
@@ -67,29 +65,30 @@ This repo provides two shell scripts for one‑click configuration into personal
 .
 ├── claude-code # Claude Code related
 │   ├── .claude
-│   │   ├── agents # sub-agents
-│   │   ├── commands # slash-commands. Partly taken from https://github.com/brennercruvinel/CCPlugins/tree/main/commands
-│   │   ├── hooks # hooks
+│   │   ├── agents        # sub-agents
+│   │   ├── commands      # slash-commands. Partly taken from https://github.com/brennercruvinel/CCPlugins/tree/main/commands
+│   │   ├── hooks         # hooks
 │   │   └── settings.json # Personal common configuration for Claude Code
 │   ├── claude-code-router
-│   │   └── config.json # Personal common configuration for claude-code-router
-│   ├── plugins # Claude Code Plugin
+│   │   └── config.json   # Personal common configuration for claude-code-router
+│   ├── plugins           # Claude Code Plugin
 │   │   └── frontend-big-brother
 │   └── project-memory-for-ice3 # Memory files for ice.js3 projects
 ├── cline # Cline related
-│   ├── global # Global hooks, rules, workflows
+│   ├── global        # Global hooks, rules, workflows
 │   │   ├── Hooks
 │   │   ├── Rules
 │   │   └── Workflows
-│   └── workspace # Project‑level hooks, rules, workflows
+│   └── workspace     # Project‑level hooks, rules, workflows
 │       ├── Rules
 │       │   └── memory-bank.md # Added `code-spec.md` and `testing-spec.md` on top of the original Cline memory bank
 │       └── Workflows
 ├── memory-bank # Memory Bank
-│   ├── code-spec.md # Code Specification
+│   ├── code-spec.md    # Code Specification
 │   └── testing-spec.md # Unit Test Writing Specification (EARS format)
 └── skills
     ├── code-review
+    ├── ice-js-3-development-patterns
     └── metrics-report
 ```
 
