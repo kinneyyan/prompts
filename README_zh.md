@@ -73,7 +73,6 @@ NOTE: `commit-after-cr.md` 和 `create-unit-test.md` 中上报数据的 API 端�
 │   │   └── config.json   # claude-code-router 的个人常用配置
 │   ├── plugins           # Claude Code Plugin
 │   │   └── frontend-big-brother
-│   └── project-memory-for-ice3 # 适用于 ice.js3 项目的内存文件
 ├── cline # Cline 相关
 │   ├── global       # 全局的 hooks、rules、workflows
 │   │   ├── Hooks
@@ -83,6 +82,13 @@ NOTE: `commit-after-cr.md` 和 `create-unit-test.md` 中上报数据的 API 端�
 │       ├── Rules
 │       │   └── memory-bank.md # 在 Cline 原版基础上添加了 `code-spec.md` 和 `testing-spec.md`
 │       └── Workflows
+├── ice3-project-memory # ice.js 3 项目的 README for agents
+│   ├── child-app       # 子应用
+│   │   ├── AGENTS.md
+│   │   └── CLAUDE.md
+│   └── framework-app   # 主应用
+│       ├── AGENTS.md
+│       └── CLAUDE.md
 ├── memory-bank
 │   ├── code-spec.md    # 代码规约
 │   └── testing-spec.md # 单元测试编写规范 (EARS 格式)

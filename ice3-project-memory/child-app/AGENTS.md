@@ -1,10 +1,8 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+# AGENTS.md
 
 ## Project Overview
 
-This is a frontend React template project based on ice.js 3, designed for console/H5 applications that can work as host/base applications and standalone applications.
+This is a frontend React template project based on ice.js 3, designed for console/H5 applications that can work as both micro-frontend child applications and standalone applications.
 
 ### Key Technologies
 
@@ -13,8 +11,8 @@ This is a frontend React template project based on ice.js 3, designed for consol
 - Styling: Less with Ant Design v4
 - State Management: ice.js store (based on [icestore](https://github.com/ice-lab/icestore))
 - Routing: Convention-based routing
-- HTTP Client: @bud-fe/request (axios wrapper)
-- UI Components: Ant Design, @bud-fe/react-pc-ui, @ant-design/pro-components
+- HTTP Client: `@bud-fe/request` (axios wrapper)
+- UI Components: `antd`, `@bud-fe/react-pc-ui`, `@ant-design/pro-components`
 - Testing: Vitest with Testing Library
 - Linting: ESLint, Stylelint, Prettier with husky/lint-staged
 - Package Manager: pnpm (v9.x)
@@ -69,7 +67,7 @@ pnpm build:feature-2
 pnpm new
 ```
 
-## Architecture Overview
+## Architecture & Patterns
 
 ### Project Structure
 
@@ -95,13 +93,8 @@ src/
 1. **Routing**: Uses convention-based routing where files in `src/pages` automatically become routes
 2. **State Management**: Uses ice.js store with model pattern for global state
 3. **Authentication**: Custom auth implementation that works with backend permissions
-4. **API Layer**: Centralized service layer in `src/services` using @bud-fe/request
-5. **Micro-frontend**: This repository is a template for a micro-frontend host/base application (icestark host). It is designed to act as the shell that loads and mounts child applications, while also supporting standalone development and testing. Key points:
-
-- Acts as an icestark host responsible for loading and mounting child apps and providing shared resources such as styles, auth, and global state.
-- Supports local standalone mode for development and debugging; build output can also be packaged as a child app to be loaded by an upstream host.
-- Configuration and entry points: see `ice.config.mts` for publicPath/output settings and mount-node conventions.
-
+4. **API Layer**: Centralized service layer in `src/services` using `@bud-fe/request`
+5. **Micro-frontend**: Configured as an icestark child application by default
 6. **Permissions**: Custom permission system based on backend-provided menu/button permissions
 7. **Styling**: Uses Less with global variables and mixins, Ant Design components
 
@@ -112,15 +105,6 @@ src/
 3. Global state is managed through ice.js store models
 4. API calls are centralized in service files under `src/services`
 5. Components consume data through props, store hooks, or direct service calls
-
-### Testing
-
-- Uses Vitest with Testing Library
-- Test files are colocated with components in `__tests__` directories
-- Mocks are used for service dependencies
-- Component testing focuses on user interactions and UI behavior
-
-## Key Implementation Patterns
 
 ### API Service Pattern
 
@@ -148,10 +132,19 @@ Uses ice.js store with model pattern:
 - Reusable components are placed in `src/components`
 - Page components are in `src/pages` following routing conventions
 
-## Coding Standards
+## Quality & Standards
 
-For detailed coding standards, please refer to the @./memory-bank/code-spec.md
+### Testing
 
-## Unit Testing Guidelines
+- Uses Vitest with Testing Library
+- Test files are colocated with components in `__tests__` directories
+- Mocks are used for service dependencies
+- Component testing focuses on user interactions and UI behavior
 
-For detailed unit testing guidelines, please refer to the @./memory-bank/testing-spec.md.
+### Coding Standards
+
+For detailed coding standards, please refer to the ./memory-bank/code-spec.md
+
+### Unit Testing Guidelines
+
+For detailed unit testing guidelines, please refer to the ./memory-bank/testing-spec.md.
