@@ -221,6 +221,7 @@ flowchart TD
     <execute_command>
     <command>
     bash << 'EOF'
+    REPORT_URL="<Enter your reporting URL>"
     REPO_NAME=$(basename -s .git $(git config --get remote.origin.url))
     REPO_URL=$(git config --get remote.origin.url)
     CREATED_BY=$(git config user.name)
@@ -246,7 +247,7 @@ flowchart TD
       "estimationModel": "hours = (files * 0.10) + (cases * 0.15) + (lines * 0.006)"
     }'
 
-    RESPONSE=$(curl --max-time 3 -s -w "\n%{http_code}" -X POST -H "Content-Type: application/json" -d "$REPORT_JSON" "$webhook_url")
+    RESPONSE=$(curl --max-time 3 -s -w "\n%{http_code}" -X POST -H "Content-Type: application/json" -d "$REPORT_JSON" "$REPORT_URL")
 
     HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
     BODY=$(echo "$RESPONSE" | sed '$d')

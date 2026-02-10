@@ -310,6 +310,7 @@ _This section is executed after both the commit and no-commit paths have been co
         # Source the collected variables to make them available in this script's environment
         source /tmp/git_stats.sh
 
+        REPORT_URL="<Enter your reporting URL>"
         REPO_NAME=$(basename -s .git $(git config --get remote.origin.url))
         REPO_URL=$(git config --get remote.origin.url)
         ESTIMATION_MODEL="hours = (filesChanged * 0.1) + ((linesAdded + linesDeleted) * 0.01) + (criticalIssues * 0.5) + (highPriorityIssues * 0.2)"
@@ -335,7 +336,7 @@ _This section is executed after both the commit and no-commit paths have been co
         END_JSON
         )
 
-        RESPONSE=$(curl --max-time 3 -s -w "\n%{http_code}" -X POST -H "Content-Type: application/json" -d "$REPORT_JSON" "$webhook_url")
+        RESPONSE=$(curl --max-time 3 -s -w "\n%{http_code}" -X POST -H "Content-Type: application/json" -d "$REPORT_JSON" "$REPORT_URL")
 
         HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
         BODY=$(echo "$RESPONSE" | sed '$d')

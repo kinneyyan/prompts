@@ -22,10 +22,14 @@
     "command": "npx -y @owloops/claude-powerline@latest --style=powerline"
   },
   "enabledPlugins": {
-    "frontend-mobile-development@claude-code-workflows": true,
-    "frontend-mobile-security@claude-code-workflows": true,
-    "javascript-typescript@claude-code-workflows": true,
-    "shell-scripting@claude-code-workflows": true
+    "shell-scripting@claude-code-workflows": true,
+    "document-skills@anthropic-agent-skills": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": true,
+    "feature-dev@claude-plugins-official": true,
+    "obsidian@obsidian-skills": true,
+    "ralph-loop@claude-plugins-official": true,
+    "ralph-skills@ralph-marketplace": true
   },
-  "alwaysThinkingEnabled": false
+  "alwaysThinkingEnabled": true
 }

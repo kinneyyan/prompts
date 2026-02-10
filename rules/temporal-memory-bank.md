@@ -36,21 +36,18 @@ flowchart TD
 ### Core Files (Required)
 
 1. `project-brief.md`
-
    - Foundation document that shapes all other files
    - Created at project start if it doesn't exist
    - Defines core requirements and goals
    - Source of truth for project scope
 
 2. `product-context.md`
-
    - Why this project exists
    - Problems it solves
    - How it should work
    - User experience goals
 
 3. `active-context.md`
-
    - Current work focus
    - Recent changes
    - Next steps
@@ -62,7 +59,6 @@ flowchart TD
    - This helps me reason about recent changes without bloating the file.
 
 4. `system-patterns.md`
-
    - System architecture
    - Key technical decisions
    - Design patterns in use
@@ -70,7 +66,6 @@ flowchart TD
    - Critical implementation paths
 
 5. `tech-context.md`
-
    - Technologies used
    - Development setup
    - Technical constraints
@@ -78,18 +73,15 @@ flowchart TD
    - Tool usage patterns
 
 6. `code-spec.md`
-
    - Defines the project's coding standards.
    - Includes rules for linting, formatting, naming conventions, and commit messages.
    - Ensures code consistency and quality.
 
 7. `testing-spec.md`
-
    - Provides detailed, strict guidelines for writing unit tests.
    - Ensures test quality, consistency, and maintainability.
 
 8. `progress.md`
-
    - What works
    - What's left to build
    - Current status
@@ -97,7 +89,6 @@ flowchart TD
    - Evolution of project decisions
 
 9. `changelog.md`
-
    - Chronological log of key changes, decisions, or versions
    - Follows a `CHANGELOG.md` convention with version/date headers
    - Example format:

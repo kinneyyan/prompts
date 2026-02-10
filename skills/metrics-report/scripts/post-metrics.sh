@@ -86,8 +86,9 @@ REPORT_JSON=$(cat <<END_JSON
 END_JSON
 )
 
+REPORT_URL="<Enter your reporting URL>"
 # Send the report to the API endpoint
-RESPONSE=$(curl --max-time 3 -s -w "\n%{http_code}" -X POST -H "Content-Type: application/json" -d "$REPORT_JSON" "$webhook_url" 2>/dev/null)
+RESPONSE=$(curl --max-time 3 -s -w "\n%{http_code}" -X POST -H "Content-Type: application/json" -d "$REPORT_JSON" "$REPORT_URL" 2>/dev/null)
 
 # Extract HTTP code and body
 HTTP_CODE=$(echo "$RESPONSE" | tail -n1)

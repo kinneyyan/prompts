@@ -44,9 +44,9 @@
     }
   ],
   "Router": {
-    "default": "aihubmix,coding-minimax-m2.1-free",
+    "default": "dashscope,qwen3-max",
     "background": "dashscope,qwen3-max",
-    "think": "aihubmix,coding-minimax-m2.1-free",
+    "think": "dashscope,qwen3-max",
     "longContext": "dashscope,qwen3-max",
     "webSearch": "gemini,gemini-2.5-flash"
   }
