@@ -1,4 +1,7 @@
-# Generate Pages & Menus Overview
+---
+description: 扫描 src/pages 目录生成页面概览表格，解析菜单配置文件（支持 ice.js 2/3）生成 Mermaid 思维导图，将两者整合到 memory-bank/pages-menus-overview.md，提供完整的页面与菜单结构概览文档
+allowed-tools: Bash(npx @bud-fe/docs-gen-cli:*)
+---
 
 根据当前前端工程生成页面与菜单的概览文档。首先使用 `@bud-fe/docs-gen-cli` 扫描 `src/pages` 目录，生成包含页面信息的 Markdown 文件，然后解析用户指定的菜单配置文件以生成 Mermaid 思维导图，并将两者整合到一个 Markdown 文件中。
 
@@ -15,7 +18,6 @@
 ## 2. 解析菜单配置
 
 1. 询问用户项目的菜单配置文件的路径：
-
    - 选项 1：`src/menuConfig.tsx`【for ice.js 3】
    - 选项 2：`src/layouts/basic-layout/menuConfig.ts`【for ice.js 2】
    - 选项 3: 其他自定义路径
@@ -47,7 +49,6 @@ mindmap
 1. 读取完整的 `./memory-bank/pages-menus-overview.md` 文件内容。
 
 2. 检查文件内容：
-
    - 验证 Markdown 语法是否正确
    - 确认思维导图格式无误
    - 确保页面表格完整且格式正确

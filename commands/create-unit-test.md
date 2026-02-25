@@ -1,14 +1,17 @@
-# Create Unit Test
+---
+description: 为 src/pages 目录下的页面组件生成符合规范的 Vitest 单元测试文件。支持单文件或批量处理，自动排除 components 子目录，提供测试生成、覆盖率分析、工作量评估和统计报告功能，可选择性运行测试，最后上报数据到 API
+allowed-tools: Bash(pnpm test:*)
+---
 
-I'll generate unit test files for specified page components following the testing specifications. This command automates the creation of Vitest unit tests that comply with your project's testing standards.
+# Create Unit Test
 
 ## Task Objective
 
-根据指定页面路径 $ARGUMENTS（限定于 `src/pages` 目录），生成符合 @memory-bank/testing-spec.md 规范的 Vitest 单元测试文件。支持单文件及批量处理，测试文件应放置于项目根目录 `__tests__` 对应路径。
+根据用户指定的页面路径（限定于 `src/pages` 目录），生成符合项目目录下 `memory-bank/testing-spec.md` 规范的 Vitest 单元测试文件。支持单文件及批量处理，测试文件应放置于项目根目录 `__tests__` 对应路径。
 
 ## Core Principle
 
-此工作流完全遵循 @memory-bank/testing-spec.md 中定义的规则。该文档是所有测试实现细节的唯一真实来源。此工作流仅用于规范化生成测试文件的程序性步骤。
+此工作流完全遵循 `memory-bank/testing-spec.md` 中定义的规则。该文档是所有测试实现细节的唯一真实来源。此工作流仅用于规范化生成测试文件的程序性步骤。
 
 ## Create Unit Test Process - Detailed Sequence of Steps
 
@@ -37,22 +40,18 @@ flowchart TD
 
 ### 1. 上下文准备 (Context Preparation)
 
-1. **捕获任务名称**：捕获用户的原始输入的 prompt，并将其存储为 `taskName`，用于最终报告。
-2. **学习单元测试编写规范**：读取并牢记 @memory-bank/testing-spec.md 中的所有规范。
-
-   需要读取 @memory-bank/testing-spec.md 文件来学习测试规范，包括测试文件组织、元素查询、事件模拟和模拟策略等。
+1. **学习单元测试编写规范**：读取并牢记 `memory-bank/testing-spec.md` 中的所有规范，包括测试文件组织、元素查询、事件模拟和模拟策略等。
 
 ### 2. 目标识别与生成确认 (Target Identification & Generation Confirmation)
 
 1. **接收并验证路径**：接收并验证用户输入的目标页面组件路径。
 2. **应用排除规则**：在处理之前，首先过滤文件列表。所有路径匹配 `src/pages/**/components` 的 `jsx` 和 `tsx` 文件都将被直接排除，不进入后续步骤。
-3. **确认测试文件路径**：根据 @memory-bank/testing-spec.md 中的 `REQ-TIPS-01` 和 `REQ-TIPS-02` 规范，确认将在 `__tests__` 目录下生成的测试文件路径和文件名（先不要生成）。
+3. **确认测试文件路径**：根据 `memory-bank/testing-spec.md` 中的 `REQ-TIPS-01` 和 `REQ-TIPS-02` 规范，确认将在 `__tests__` 目录下生成的测试文件路径和文件名（先不要生成）。
 4. **识别文件状态**：对上一步确定生成的路径列表，检查文件系统中是否已存在对应的测试文件。
    - 根据检查结果，将文件分为两类："已存在"（将被跳过）和"待生成"。
 5. **用户交互与确认**：在确认生成测试文件之前，**必须**询问用户是否生成。如果存在已有的测试文件，明确告知用户这些文件将被跳过，并向用户展示一份编号的"待生成"测试文件清单。
 
    需要向用户展示文件清单并询问生成选择，包括：
-
    - 显示已存在的测试文件（将被跳过）
    - 显示待生成的测试文件清单
    - 提供选择选项：全部生成、选择性生成（如：1, 3, 5）、取消操作
@@ -87,7 +86,7 @@ flowchart TD
 
 ### 4. 测试用例实现 (Test Case Implementation)
 
-1. 分析目标组件的功能和依赖，并严格遵循 @memory-bank/testing-spec.md 的规范（元素查询、事件模拟、模拟），在 `describe` 块内为核心功能场景（如：初始渲染、用户交互、异步更新等）创建 `test` 用例。
+1. 分析目标组件的功能和依赖，并严格遵循 `memory-bank/testing-spec.md` 的规范（元素查询、事件模拟、模拟），在 `describe` 块内为核心功能场景（如：初始渲染、用户交互、异步更新等）创建 `test` 用例。
 
 ### 5. 完成与批量处理 (Finalization & Batch Processing)
 
@@ -114,16 +113,13 @@ flowchart TD
 2. **征询用户意见**：询问用户是否立即运行刚刚生成的单元测试
 
    询问用户是否立即运行刚刚生成的单元测试，提供选项：
-
    - 是，运行测试
    - 否，稍后手动运行
 
 3. **数据收集与覆盖率分析**：
 
    根据用户的选择，执行不同的数据获取路径。无论走哪条路径，最终都必须产出 `testCasesPassed`、`testCasesFailed`、`coverageStatements`、`coverageBranches`、`coverageFunctions`、`coverageLines` 和 `coverageSource` 字段。
-
    - **路径 A：执行测试并分析结果 (用户选择“是”)**
-
      - **【重要】**：执行测试只针对本次新生成的文件。如果测试报错或失败，**严禁**自动修复
      - 执行以下命令执行测试并过滤输出：
 
@@ -178,7 +174,6 @@ flowchart TD
      - **执行静态估算**：直接进入下方的“静态估算覆盖率逻辑”。
 
 4. **静态估算覆盖率逻辑 (仅在 coverageSource 为 "estimated" 时执行)**：
-
    - **分析过程**：对比目标源文件（`src`）与生成的测试文件（`__tests__`）。
    - **评估准则**：
      - 检查测试用例是否覆盖了源文件的核心导出函数、主要的逻辑判断分支（if/else）、以及关键的 UI 渲染条件。
@@ -192,7 +187,6 @@ flowchart TD
    **[重要]** 无论成功与否，切勿重复提交报告。请直接进行下一步操作。
 
    需要执行 bash 命令来构建 JSON 报告并提交到 API，包括：
-
    - 获取 git 仓库信息（仓库名称、URL、创建者）
    - 构建包含所有统计数据的 JSON 对象
    - 通过 POST 请求提交到指定的 API 端点
@@ -209,7 +203,7 @@ flowchart TD
 
    # 构建JSON报告并提交到API
    REPORT_JSON='{
-      "taskName": "<用户输入的 prompt>",
+      "taskName": "<此次实际生成的单测文件对应的页面路径>",
       "repositoryName": "'"$REPO_NAME"'",
       "repositoryUrl": "'"$REPO_URL"'",
       "createdBy": "'"$CREATED_BY"'",
@@ -233,6 +227,5 @@ flowchart TD
 ### 9. 输出最终结果 (Output Final Result)
 
 1.  **输出最终结果**：将以下两部分内容呈现给用户：
-
     - 标准化 JSON 报告
     - 上报状态信息

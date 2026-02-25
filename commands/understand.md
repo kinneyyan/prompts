@@ -1,4 +1,6 @@
-# Understand Project
+---
+description: Comprehensively analyze project architecture and patterns using native tools to scan project structure, read key files, and identify tech stack. Analyze entry points, core modules, data layer, API layer, frontend components, and configuration. Identify naming conventions, code style, error handling, authentication, authorization, and state management strategies. Output architecture diagrams, key components, data flow, and development workflow summary.
+---
 
 I'll analyze your entire application to understand its architecture, patterns, and how everything works together.
 

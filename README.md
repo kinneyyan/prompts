@@ -4,15 +4,15 @@
 
 A collection of rules, workflows/commands, skills, sub-agents, hooks, and commonly used configurations that I use in my daily work with coding agents (including but not limited to Cline, Kilo Code, Claude Code).
 
-_Currently focused primarily on maintaining skills and commands._
+_**NOTE**: Files in the `workflows` directory are being gradually merged into the `commands` directory to achieve unified workflows/commands management across all agents._
 
 ## 🚀 Quick Start
 
 Copy the commands from `setup_<platform>.sh` into your terminal to copy all workflows/commands and skills from this repo to the Global configuration of Cline, Kilo Code, or Claude Code with one click:
 
-- Cline: [setup_cline.sh](https://github.ab-inbev.cn/Kinney-Yan/prompts/blob/main/setup_cline.sh)
-- Kilo Code: [setup_kilocode.sh](https://github.ab-inbev.cn/Kinney-Yan/prompts/blob/main/setup_kilocode.sh)
-- Claude Code: [setup_claude.sh](https://github.ab-inbev.cn/Kinney-Yan/prompts/blob/main/setup_claude.sh)
+- Cline: [setup_cline.sh](https://github.com/kinneyyan/prompts/blob/main/setup_cline.sh)
+- Kilo Code: [setup_kilocode.sh](https://github.com/kinneyyan/prompts/blob/main/setup_kilocode.sh)
+- Claude Code: [setup_claude.sh](https://github.com/kinneyyan/prompts/blob/main/setup_claude.sh)
 
 ## 📦 What's Inside
 
@@ -34,12 +34,13 @@ prompts/
 ├── cline
 │   └── hooks
 │       └── PostToolUse          # cline specific hook: formatting for frontend code
-├── commands                       # slash commands for claude code, opencode, etc.
+├── commands                        # workflows/commands for most coding agents
 │   ├── commit-after-cr-lite.md     # skill version of [Create Git Commit After Code Review]
 │   ├── commit-after-cr.md          # Create Git Commit After Code Review @deprecated
 │   ├── commit.md                   # Create a Git commit with a concise message based on current changes
 │   ├── create-unit-test.md         # Generate corresponding frontend unit test file based on user-provided path
 │   ├── gen-pages-doc.md            # Generate README.md for page files using script provided by @bud-fe/docs-gen-cli
+│   ├── gen-pages-menus-overview.md # Generate overview documentation for pages and menus using script provided by @bud-fe/docs-gen-cli
 │   ├── learn.md                    # /learn - Extract patterns from conversation from https://github.com/affaan-m/everything-claude-code
 │   ├── plan.md                     # /plan - Implementation planning from https://github.com/affaan-m/everything-claude-code
 │   └── understand.md               # Analyze and understand current project architecture
@@ -64,7 +65,7 @@ prompts/
 │       └── framework-app          # main app
 │           ├── AGENTS.md
 │           └── CLAUDE.md
-└── workflows                    # workflows for cline, kilo code
+└── workflows                    # only for cline, kilo code. Gradually merge into commands/
     ├── commit-after-cr-lite.md
     ├── commit-after-cr.md
     ├── create-unit-test.md

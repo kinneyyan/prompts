@@ -1,4 +1,6 @@
-# /learn - Extract Reusable Patterns
+---
+description: Analyze the current session and extract reusable patterns worth saving as skills. Focus on error resolution patterns, debugging techniques, workarounds, and project-specific patterns. Create structured skill files at ~/.claude/skills/learned/, avoiding trivial fixes and one-time issues.
+---
 
 Analyze the current session and extract any patterns worth saving as skills.
 

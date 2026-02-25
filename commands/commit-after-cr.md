@@ -1,5 +1,5 @@
 ---
-description: Analyze changes, run pre-commit quality checks, update memory bank, and commit with review metrics.
+description: Analyze changes, run pre-commit quality checks, update memory bank, and commit with review metrics
 allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git commit:*), Bash(git add:*)
 ---
 
@@ -63,7 +63,6 @@ graph TD
 
 2.  **Reference Project Context**: Read `README.md` and memory bank files for context:
     Read and understand the files in the following paths, if they don't exist, it's okay, proceed to the next step:
-
     - @./README.md
     - @./memory-bank/project-brief.md
     - @./memory-bank/code-spec.md
@@ -167,11 +166,8 @@ If the user chooses "Proceed to commit":
     Options: `1. Yes, commit with this message`, `2. Yes, commit with this message after updating memory bank`, `3. No, I will write it myself`
 
 3.  **Execute Conditional Commit**:
-
     - **If "Yes, commit with this message after updating memory bank"**:
-
       1.  **Update Memory Bank**:
-
           - Check if `./memory-bank/active-context.md` and `./memory-bank/changelog.md` exist. If they do not exist, skip the following sub-steps.
           - Based on the context information, update the summary of code changes (`$CHANGESET_SUMMARY`) to `./memory-bank/active-context.md` and `./memory-bank/changelog.md`.
           - Additionally, attach the code review report information after updating the entry in `./memory-bank/active-context.md`, using a Markdown code block with YAML format as shown below:

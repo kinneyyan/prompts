@@ -4,7 +4,7 @@
 
 收集了我在日常工作中，个人、团队使用 coding agents (包括但不限于 Cline、Kilo Code、Claude Code) 的 rules、workflows/commands、skills、sub-agents、hooks，以及一些常用配置。
 
-_目前主要聚焦于 skills、commands 的维护。_
+_**NOTE**: `workflows` 目录下的文件准备逐步合并到 `commands` 目录下，实现各 agent 统一一套的 workflows/commands 管理_
 
 ## 🚀 Quick Start
 
@@ -34,7 +34,7 @@ prompts/
 ├── cline
 │   └── hooks
 │       └── PostToolUse          # cline 专用的 hook：针对前端代码的格式化
-├── commands                       # 斜杠命令 for claude code, opencode 等
+├── commands                        # workflows/commands for most coding agents
 │   ├── commit-after-cr-lite.md     # skill 版本的【代码审查后创建Git提交】
 │   ├── commit-after-cr.md          # 代码审查后创建Git提交 @deprecated
 │   ├── commit.md                   # 根据当前变动创建一个带简约的message的Git提交
@@ -56,7 +56,7 @@ prompts/
 ├── skills                       # 领域知识/技能包
 │   ├── code-review                   # 代码审查（本地会暂存指标数据）
 │   ├── ice-js-3-development-patterns # ice.js3项目的console端开发范式
-│   └── metrics-report                # 指标数据上报（数据从本地暂存中取）
+│   └── metrics-report                # 指标数据上报（从本地暂存获取数据）
 ├── templates                    # 一些示例/最佳实践
 │   └── ice3-project              # ice.js3项目的 AGENTS.md/CLAUDE.md
 │       ├── child-app              # 子应用
@@ -65,7 +65,7 @@ prompts/
 │       └── framework-app          # 主应用
 │           ├── AGENTS.md
 │           └── CLAUDE.md
-└── workflows                    # 工作流 for cline, kilo code
+└── workflows                    # only for cline, kilo code. Gradually merge into commands/
     ├── commit-after-cr-lite.md
     ├── commit-after-cr.md
     ├── create-unit-test.md
