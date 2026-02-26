@@ -1,36 +1,37 @@
 ---
 name: code-review
-description: Reviews the git changes, identifies critical and high-priority issues, generates review summaries, and collects metrics data for local use. Use this when users need to code review or analyzing code changes for quality issues.
+description: Reviews the changes, identifies critical and high-priority issues, generates review summaries, and collects metrics data for local use. Use this when users need to code review or analyzing code changes for quality issues.
 ---
 
-# Code Review Skill
+# Code Review and Metric Collection
 
-This skill provides comprehensive code review capabilities including change analysis, issue identification, and metrics collection.
+Review the changes and save the metrics data to a local temporary file.
 
-## File Structure
+## Script Directory
+
+**Agent Execution Instructions**:
+
+1. Determine this SKILL.md file's directory path as `SKILL_DIR`
+2. Script path = `${SKILL_DIR}/scripts/<script-name>.sh`
+
+| Script               | Purpose                                                                  |
+| -------------------- | ------------------------------------------------------------------------ |
+| `collect-metrics.sh` | Collect git statistics and code review metrics to a local temporary file |
+
+## Workflow
+
+Copy this checklist and check off items as you complete them:
 
 ```
-code-review/
-├── SKILL.md (this file)
-├── references
-│   └── guidelines.md (code review guidelines)
-└── scripts
-    └── collect-metrics.sh (collect metrics data and save it to a temporary file)
+- [ ] Step 1: Git Repo verification & Changes confirmation
+- [ ] Step 2: Code Review
+  - [ ] 2.1 Load guidelines
+  - [ ] 2.2 Analyze changes
+  - [ ] 2.3 Collect metrics ⚠️ REQUIRED
+- [ ] Step 3: Output Result
 ```
 
-## Core Functionality
-
-- **Git Repository Verification**: Validates that the current directory is a git repository with changes
-- **Code Change Analysis**: Analyzes staged, unstaged, and untracked changes
-- **Issue Categorization**: Identifies and categorizes issues as:
-  - 🚨 CRITICAL (Must fix)
-  - ⚠️ HIGH PRIORITY (Should fix)
-  - 💡 SUGGESTIONS (Consider)
-- **Metrics Collection**: Gathers statistics on files changed, lines added/deleted, and issue counts
-
-## Usage Workflow
-
-### 1. Pre-Review Setup
+### Step 1: Git Repo verification & Changes confirmation
 
 Ensure if is in a git repository directory and existing changes to review (staged, unstaged, and untracked files):
 
@@ -42,38 +43,40 @@ fi
 echo "Success: Git repository verified."
 
 if [ -z "$(git status --porcelain)" ]; then
-    echo "No changes detected. Working tree is clean. Exiting workflow."
-    exit 0
+    echo "No changes detected. Working tree is clean."
+    exit 1
 else
-    echo "Changes detected. Proceeding with review."
+    echo "Changes detected."
 fi
 ```
 
-### 2. Code Review Process
+### Step 2: Code Review
 
-The skill follows this workflow and **adds the following process nodes to the current Todo List if necessary**:
+**2.1 Load guidelines**
 
-1. **Reference Guidelines**: See [guidelines.md](references/guidelines.md) for the living checklist, treat it as the canonical set of rules to follow
-2. **Analyze Changes**: Examine all changes using `git status && git diff`
-3. **Perform Code Review**: Analyze code changes to identify issues and set variables: `CRITICAL_ISSUES_COUNT`、`HIGH_PRIORITY_ISSUES_COUNT`
-4. **Collect Metrics**: Run the `scripts/collect-metrics.sh` script to create summaries and collect metrics:
+Load `references/guidelines.md`, treat it as the canonical set of rules to follow.
+
+**2.2 Analyze changes**
+
+1. Get staged, unstaged, and untracked changes using Bash:
 
    ```bash
-   CHANGESET_SUMMARY="<Brief summary of changes (within 100 words)>"
-   CODE_REVIEW_SUMMARY="<Detailed review summary>"
-   bash <path/to/skill-folder>/scripts/collect-metrics.sh "$CHANGESET_SUMMARY" "$CODE_REVIEW_SUMMARY" "$CRITICAL_ISSUES_COUNT" "$HIGH_PRIORITY_ISSUES_COUNT"
+   git status && git diff
    ```
 
-   The script:
-   - Receive four metrics data parameters
-   - Collect other information of the current repo
-   - Save all metrics data to a temporary file
+2. Analyze code changes to identify issues and set variables: `CRITICAL_ISSUES_COUNT`、`HIGH_PRIORITY_ISSUES_COUNT` to prepare for subsequent metrics data.
 
-5. **Present Findings**: Show categorized issues to the user
+**2.3 Collect metrics** ⚠️ REQUIRED
 
-### 3. Expected Output Format
+```bash
+CHANGESET_SUMMARY="<Brief summary of changes (within 100 words)>"
+CODE_REVIEW_SUMMARY="<Detailed review summary>"
+bash ${SKILL_DIR}/scripts/collect-metrics.sh "$CHANGESET_SUMMARY" "$CODE_REVIEW_SUMMARY" "$CRITICAL_ISSUES_COUNT" "$HIGH_PRIORITY_ISSUES_COUNT"
+```
 
-When presenting findings, exactly follow one of the two templates:
+### Step 3: Output Result
+
+Show categorized issues to the user, exactly follow one of the two templates:
 
 #### Template A (any findings)
 
@@ -120,21 +123,7 @@ When presenting findings, exactly follow one of the two templates:
 🎉 Great! No issues found.
 ```
 
-### 4. Integration Notes
-
-- The skill stores temporary data in `/tmp/metrics_code-review_<repo-name>.sh`
-- All scripts are designed to be idempotent and safe to run multiple times
-
-### 5. When to Use This Skill
-
-Use this skill when you need to:
-
-- Perform code reviews on git changes
-- Analyze code quality and identify issues
-- Generate code review reports with metrics
-- Automate pre-commit code quality checks
-
-### 6. Important Guidelines
+## Notes
 
 - Always analyze actual code changes before categorizing issues
 - Be specific and actionable in issue descriptions

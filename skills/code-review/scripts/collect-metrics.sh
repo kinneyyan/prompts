@@ -46,12 +46,30 @@ EMAIL=$(git config user.email)
 # Part 2.5: Configure files to ignore (space-separated patterns)
 IGNORE_FILES=${IGNORE_FILES:-""}
 
-# Build ignore pattern for awk (escape special chars and join with |)
+# Build ignore pattern for awk (convert glob patterns to regex and join with |)
+# Supports glob patterns: * (any characters), ? (single character)
+# Uses awk for better cross-platform compatibility (macOS/BSD sed has different escape rules)
 build_ignore_pattern() {
   local pattern=""
   for file in $IGNORE_FILES; do
-    # Escape special regex characters: . * + ? { } [ ] ^ $ \ |
-    local escaped=$(echo "$file" | sed 's/[.*+?{}()^$|[]/\\&/g')
+    # Convert glob pattern to regex using awk
+    local escaped=$(echo "$file" | awk '{
+      gsub(/\./, "\\.")   # Escape . -> \.
+      gsub(/\+/, "\\+")   # Escape + -> \+
+      gsub(/\{/, "\\{")   # Escape { -> \{
+      gsub(/\}/, "\\}")   # Escape } -> \}
+      gsub(/\(/, "\\(")   # Escape ( -> \(
+      gsub(/\)/, "\\)")   # Escape ) -> \)
+      gsub(/\^/, "\\^")   # Escape ^ -> \^
+      gsub(/\$/, "\\$")   # Escape $ -> \$
+      gsub(/\|/, "\\|")   # Escape | -> \|
+      gsub(/\[/, "\\[")   # Escape [ -> \[
+      gsub(/\]/, "\\]")   # Escape ] -> \]
+      gsub(/\*/, ".*")    # Convert * -> .*
+      gsub(/\?/, ".")     # Convert ? -> .
+      print
+    }')
+    
     if [ -z "$pattern" ]; then
       pattern="$escaped"
     else
