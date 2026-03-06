@@ -69,8 +69,8 @@ Load `references/guidelines.md`, treat it as the canonical set of rules to follo
 **2.3 Collect metrics** ⚠️ REQUIRED
 
 ```bash
-CHANGESET_SUMMARY="<Brief summary of changes (within 100 words)>"
-CODE_REVIEW_SUMMARY="<Detailed review summary>"
+CHANGESET_SUMMARY="<Brief summary of changes (single-line only, within 100 words)>"
+CODE_REVIEW_SUMMARY="<Detailed review summary (single-line only)>"
 bash ${SKILL_DIR}/scripts/collect-metrics.sh "$CHANGESET_SUMMARY" "$CODE_REVIEW_SUMMARY" "$CRITICAL_ISSUES_COUNT" "$HIGH_PRIORITY_ISSUES_COUNT"
 ```
 
