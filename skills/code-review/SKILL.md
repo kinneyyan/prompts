@@ -17,6 +17,7 @@ Review the changes and save the metrics data to a local temporary file.
 | Script               | Purpose                                                                  |
 | -------------------- | ------------------------------------------------------------------------ |
 | `collect-metrics.sh` | Collect git statistics and code review metrics to a local temporary file |
+| `show-diff.sh`       | Show git diff with exclusions                                            |
 
 ## Workflow
 
@@ -27,8 +28,9 @@ Copy this checklist and check off items as you complete them:
 - [ ] Step 2: Code Review
   - [ ] 2.1 Load guidelines
   - [ ] 2.2 Analyze changes
-  - [ ] 2.3 Collect metrics ⚠️ REQUIRED
-- [ ] Step 3: Output Result
+  - [ ] 2.3 Output Result
+- [ ] Step 3: User feedback & Validation
+- [ ] Step 4: Collect metrics ⚠️ REQUIRED
 ```
 
 ### Step 1: Git Repo verification & Changes confirmation
@@ -59,22 +61,13 @@ Load `references/guidelines.md`, treat it as the canonical set of rules to follo
 **2.2 Analyze changes**
 
 1. Get staged, unstaged, and untracked changes using Bash:
-
    ```bash
-   git status && git diff
+   git status HEAD --short && bash ${SKILL_DIR}/scripts/show-diff.sh`
    ```
+2. Analyze code changes to identify issues and store details (FilePath, Line, Suggestion) for subsequent output.
+3. Set initial counts: `CRITICAL_ISSUES_COUNT`, `HIGH_PRIORITY_ISSUES_COUNT`.
 
-2. Analyze code changes to identify issues and set variables: `CRITICAL_ISSUES_COUNT`、`HIGH_PRIORITY_ISSUES_COUNT` to prepare for subsequent metrics data.
-
-**2.3 Collect metrics** ⚠️ REQUIRED
-
-```bash
-CHANGESET_SUMMARY="<Brief summary of changes (single-line only, within 100 words)>"
-CODE_REVIEW_SUMMARY="<Detailed review summary (single-line only)>"
-bash ${SKILL_DIR}/scripts/collect-metrics.sh "$CHANGESET_SUMMARY" "$CODE_REVIEW_SUMMARY" "$CRITICAL_ISSUES_COUNT" "$HIGH_PRIORITY_ISSUES_COUNT"
-```
-
-### Step 3: Output Result
+**2.3 Output Result**
 
 Show categorized issues to the user, exactly follow one of the two templates:
 
@@ -121,6 +114,36 @@ Show categorized issues to the user, exactly follow one of the two templates:
 ## Code review Skill Output
 
 🎉 Great! No issues found.
+```
+
+### Step 3: User feedback & Validation
+
+1. If any issues found, ask the user: "Do you have any objections to the review results?" And two options are provided: `1. Yes, I have objections`、`2. No, proceed to the next step`
+2. If the user choose "Yes":
+   1. Provide a numbered list of all CRITICAL and HIGH PRIORITY issues.
+   2. Ask the user: "Please select the numbers of the issues you disagree with and briefly explain why (e.g., '1-this is a test file, 3-intentional technical debt')"
+   3. Parse the user's response to identify which specific CRITICAL and HIGH PRIORITY issues were rejected.
+   4. Extract the user's reason for each rejected item.
+   5. Calculate `REJECTED_CRITICAL_COUNT` and `REJECTED_HIGH_COUNT`.
+   6. Format the rejected details into a single-line string `REJECTION_DETAILS` (Format: `[Level]Issue brief=>User reason;[Level]Issue brief=>User reason`).
+3. If no issues found or no objections:
+   - `REJECTED_CRITICAL_COUNT=0`
+   - `REJECTED_HIGH_COUNT=0`
+   - `REJECTION_DETAILS=""`
+
+### Step 4: Collect metrics ⚠️ REQUIRED
+
+```bash
+CHANGESET_SUMMARY="<Brief summary of changes (single-line only, within 100 words)>"
+CODE_REVIEW_SUMMARY="<Detailed review summary (single-line only)>"
+bash ${SKILL_DIR}/scripts/collect-metrics.sh \
+  "$CHANGESET_SUMMARY" \
+  "$CODE_REVIEW_SUMMARY" \
+  "$CRITICAL_ISSUES_COUNT" \
+  "$HIGH_PRIORITY_ISSUES_COUNT" \
+  "$REJECTED_CRITICAL_COUNT" \
+  "$REJECTED_HIGH_COUNT" \
+  "$REJECTION_DETAILS"
 ```
 
 ## Notes

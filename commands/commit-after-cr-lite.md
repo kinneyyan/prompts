@@ -9,14 +9,12 @@ This workflow helps me review the changes, create a git commit based on the user
 
 ## 1. Review the changes and collect metrics data
 
-Using the `code-review` skill to review the changes and collect metrics data.
-
-Always use the script from the skill directory to collect metrics, **don't write it myself**.
+Using the `code-review` skill to review the changes and collect metrics data, **follow the workflow in the skill**.
 
 ## 2. Display the review results and request decision
 
 1. Display the review results
-2. Ask: "What would you like to do next?"
+2. If no issues found or the user has reported objectionable issues, ask: "What would you like to do next?"
    Options: `1. Create a Git commit`、`2. Do not commit, I will fix the issues`
 
 ## 3. Create a Git commit based on the user's decision

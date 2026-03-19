@@ -25,8 +25,8 @@ if [[ "$IS_ABSOLUTE_CALL" == "false" ]]; then
   exit 1
 fi
 
-if [ "$#" -ne 4 ]; then
-  echo "Error: Four parameters are required"
+if [ "$#" -ne 7 ]; then
+  echo "Error: Seven parameters are required"
   exit 1
 fi
 
@@ -35,6 +35,9 @@ CHANGESET_SUMMARY=$1
 CODE_REVIEW_SUMMARY=$2
 CRITICAL_ISSUES_COUNT=$3
 HIGH_PRIORITY_ISSUES_COUNT=$4
+REJECTED_CRITICAL_COUNT=$5
+REJECTED_HIGH_COUNT=$6
+REJECTION_DETAILS=$7
 
 # Part 2: Get branch and git user info
 REPO_NAME=$(basename -s .git "$(git config --get remote.origin.url)")
@@ -137,8 +140,11 @@ LINES_ADDED=${TOTAL_LINES_ADDED}
 LINES_DELETED=${TOTAL_LINES_DELETED}
 CRITICAL_ISSUES_COUNT=${CRITICAL_ISSUES_COUNT}
 HIGH_PRIORITY_ISSUES_COUNT=${HIGH_PRIORITY_ISSUES_COUNT}
-ESTIMATION_MODEL="hours = (filesChanged * 0.1) + ((linesAdded + linesDeleted) * 0.01) + (criticalIssues * 0.5) + (highPriorityIssues * 0.2)"
-ESTIMATED_HOURS=$(echo "scale=2; $TOTAL_FILES_CHANGED * 0.1 + ($TOTAL_LINES_ADDED + $TOTAL_LINES_DELETED) * 0.01 + $CRITICAL_ISSUES_COUNT * 0.5 + $HIGH_PRIORITY_ISSUES_COUNT * 0.2" | bc)
+REJECTED_CRITICAL_COUNT=${REJECTED_CRITICAL_COUNT}
+REJECTED_HIGH_COUNT=${REJECTED_HIGH_COUNT}
+REJECTION_DETAILS="${REJECTION_DETAILS}"
+ESTIMATION_MODEL="hours = (filesChanged * 0.1) + ((linesAdded + linesDeleted) * 0.01) + ((criticalIssues - rejectedCritical) * 0.5) + ((highPriorityIssues - rejectedHigh) * 0.2)"
+ESTIMATED_HOURS=$(echo "scale=2; $TOTAL_FILES_CHANGED * 0.1 + ($TOTAL_LINES_ADDED + $TOTAL_LINES_DELETED) * 0.01 + ($CRITICAL_ISSUES_COUNT - $REJECTED_CRITICAL_COUNT) * 0.5 + ($HIGH_PRIORITY_ISSUES_COUNT - $REJECTED_HIGH_COUNT) * 0.2" | bc)
 INNER_EOF
 
 echo "✅ All variables collected and stored in '$TARGET_PATH'"
