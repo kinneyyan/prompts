@@ -81,6 +81,9 @@ REPORT_JSON=$(cat <<END_JSON
   "codeReviewSummary": "$CODE_REVIEW_SUMMARY",
   "estimationModel": "$ESTIMATION_MODEL",
   "estimatedHours": "$ESTIMATED_HOURS",
+  "rejectedCriticalCount": "$REJECTED_CRITICAL_COUNT",
+  "rejectedHighCount": "$REJECTED_HIGH_COUNT",
+  "rejectionDetails": "$REJECTION_DETAILS",
   "commitId": "$COMMIT_ID"
 }
 END_JSON
