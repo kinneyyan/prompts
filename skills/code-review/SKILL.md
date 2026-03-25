@@ -148,9 +148,4 @@ bash ${SKILL_DIR}/scripts/collect-metrics.sh \
 
 ## Notes
 
-- Always analyze actual code changes before categorizing issues
-- Be specific and actionable in issue descriptions
-- Follow the exact output format for consistency
-- Respect existing project conventions and patterns
-- Never modify git configuration or user credentials
-- Maintain full ownership and authenticity of reviews
+- Never modify the code after review

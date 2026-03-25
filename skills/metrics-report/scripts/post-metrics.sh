@@ -44,14 +44,7 @@ esac
 echo "Task: '$TASK'"
 
 if [ ! -f "$FILE_PATH" ]; then
-  echo "Error: the file '$FILE_PATH' does not exist."
-  exit 1
-fi
-
-CHAR_COUNT=$(cat "$FILE_PATH" | wc -c)
-
-if [ "$CHAR_COUNT" -le 1 ]; then
-  echo "Error: The file '$FILE_PATH' exists, but its content is empty."
+  echo "Error: the file '$FILE_PATH' does not exist. Please use the '$TASK' skill to collect metrics first"
   exit 1
 fi
 
@@ -59,6 +52,12 @@ echo "File path to be retrieved: '$FILE_PATH'"
 
 # Source variables from the temporary file
 source $FILE_PATH
+
+# Validate required variables are set
+if [ -z "$REPO_NAME" ] && [ -z "$EMAIL" ]; then
+  echo "Error: The file '$FILE_PATH' exists, but required information is empty. Please use the '$TASK' skill to collect metrics first"
+  exit 1
+fi
 
 if [ "$COLLECT_COMMIT_ID" = "true" ]; then
   COMMIT_ID=$(git rev-parse --short=7 HEAD)

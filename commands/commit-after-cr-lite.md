@@ -1,23 +1,28 @@
 ---
-description: Review the changes, create a git commit based on the user's decision and post metrics data finally
+description: Review the changes, create a git commit based on user's decision and post metrics data finally
 allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git commit:*), Bash(git add:*)
 ---
 
 # Git Commit After Code Review
 
-This workflow helps me review the changes, create a git commit based on the user's decision and post metrics data finally.
+Review the changes, create a git commit based on user's decision and post metrics data finally.
 
-## 1. Review the changes and collect metrics data
+## 1. Review the changes
 
-Using the `code-review` skill to review the changes and collect metrics data, **follow the workflow in the skill**.
+Using the `code-review` skill to:
 
-## 2. Display the review results and request decision
+- Review the changes
+- Display the results
+- Ask for feedback from user on issues
+- Collect metrics data
 
-1. Display the review results
-2. If no issues found or the user has reported objectionable issues, ask: "What would you like to do next?"
-   Options: `1. Create a Git commit`、`2. Do not commit, I will fix the issues`
+Append the workflow within the skill to the current workflow.
 
-## 3. Create a Git commit based on the user's decision
+## 2. Ask user whether to create a Git commit
+
+After collecting metric data, ask: "What would you like to do next?" Options: `1. Create a Git commit`、`2. Do not commit, I will fix the issues`
+
+## 3. Create a Git commit based on user's decision
 
 ### Case 1: When user chose "Create a Git commit"
 
@@ -48,7 +53,7 @@ Proceed to the next step directly.
 
 ## 4. Post metrics
 
-_This section is executed regardless of whether the user chooses to submit._
+_This section is executed regardless of whether user chooses to submit._
 
 Using the `metrics-report` skill to post metrics data.
 
