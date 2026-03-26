@@ -23,7 +23,7 @@ Note what you could NOT figure out from code alone — these become things to in
 
 ## Phase 2: Write AGENTS.md
 
-Write a minimal AGENTS.md at the project root. Every line must pass this test: "Would removing this cause the agent to make mistakes?" If no, cut it.
+Write a minimal AGENTS.md at the project root. It is advisable to keep it under 200 lines. Every line must pass this test: "Would removing this cause the agent to make mistakes?" If no, cut it.
 
 Include:
 
@@ -47,8 +47,6 @@ Exclude:
 - Code formatting rules that Prettier handles automatically (e.g., indentation style, semicolons, quote style, trailing commas, line length, etc.)
 
 ### Recommended AGENTS.md Template
-
-When generating AGENTS.md, follow this concise structure. Adapt the content to your specific project:
 
 ````
 # Project Name
@@ -110,16 +108,11 @@ src/
 
 ### Key Principles
 
-1. **Keep it minimal**: Only include what the agent would get wrong without it
-2. **No Prettier rules**: Skip formatting details like "use 2 spaces for indentation" — Prettier handles this
-3. **Be actionable**: Each section should give the agent clear guidance
-4. **Project-specific**: Adapt the template to reflect actual project conventions
-
 Do not repeat yourself and do not make up sections like "Common Development Tasks" or "Tips for Development" — only include information expressly found in files you read.
 
 If AGENTS.md already exists: read it, propose specific changes as diffs, and explain why each change improves it. Do not silently overwrite.
 
-For projects with multiple concerns, suggest organizing instructions into `.agents/rules/` as separate focused files (e.g., `code-style.md`, `testing.md`, `security.md`). These are loaded automatically alongside AGENTS.md and can be scoped to specific file paths using `paths` frontmatter.
+For projects with multiple concerns, suggest organizing instructions into `docs` as separate focused files (e.g., `code-style.md`, `testing.md`, `security.md`). List these concerns and corresponding path in AGENTS.md, and load them only when needed (e.g., "For detailed testing guidelines, load `docs/testing.md`").
 
 For projects with distinct subdirectories (monorepos, multi-module projects, etc.): mention that subdirectory AGENTS.md files can be added for module-specific instructions (they're loaded automatically when the agent works in those directories). Offer to create them if the user wants.
 
