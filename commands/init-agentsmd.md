@@ -37,7 +37,6 @@ Include:
 
 Exclude:
 
-- File-by-file structure or component lists (agent can discover these by reading the codebase)
 - Standard language conventions agent already knows
 - Generic advice ("write clean code", "handle errors")
 - Detailed API docs or long references — use `@path/to/import` syntax instead (e.g., `@docs/api-reference.md`) to inline content on demand without bloating AGENTS.md
@@ -58,12 +57,12 @@ Exclude:
 - Language: TypeScript
 - Frontend: [e.g., React 18 + TypeScript + Less]
   - Framework: [e.g., Next.js 15, ice.js 3]
-  - UI Components: [e.g., Ant Design 4 + `@ant-design/pro-components` +  `@bud-fe/react-pc-ui`]
+  - UI Components: [e.g., Ant Design v4, `@ant-design/pro-components`, `@bud-fe/react-pc-ui`]
   - Routing: Convention-based routing
   - State Management: [e.g., Zustand, Redux Toolkit]
   - HTTP Client: [e.g., `axios`, `swr`]
-- Backend: [e.g., Next.js API Routes + Prisma + PostgreSQL]
-- Testing: [e.g., Vitest v4 + Testing Library]
+- Backend: [e.g., Next.js API Routes, Prisma, PostgreSQL]
+- Testing: [e.g., Vitest v4, Testing Library]
 - Linting: [e.g., ESLint, Stylelint, Prettier]
 - Package Manager: [e.g., pnpm]
 
@@ -77,6 +76,8 @@ Exclude:
 ## Project Structure
 
 ```
+docs/               # Documentation
+prd/                # Original PRD document
 src/
 ├── pages/          # Page components
 ├── components/     # Reusable components
@@ -100,10 +101,11 @@ src/
 - Environment variables go in .env.local, do not commit to git
 - PR titles in English: `feat: xxx` / `fix: xxx`
 
-## Notes
+## References
 
-- [Project-specific notes, e.g., "Don't manually edit Prisma migration SQL files"]
-- [Any other project-specific guidance]
+- Detailed code conventions: `docs/code-style.md`
+- Detailed testing guidelines: `docs/testing.md`
+- [Any other specific concerns]
 ````
 
 ### Key Principles
@@ -112,7 +114,7 @@ Do not repeat yourself and do not make up sections like "Common Development Task
 
 If AGENTS.md already exists: read it, propose specific changes as diffs, and explain why each change improves it. Do not silently overwrite.
 
-For projects with multiple concerns, suggest organizing instructions into `docs` as separate focused files (e.g., `code-style.md`, `testing.md`, `security.md`). List these concerns and corresponding path in AGENTS.md, and load them only when needed (e.g., "For detailed testing guidelines, load `docs/testing.md`").
+For projects with multiple concerns, suggest organizing instructions into `docs` as separate focused files (e.g., `code-style.md`, `testing.md`, `security.md`). List these concerns and corresponding path in AGENTS.md, and load them only when needed.
 
 For projects with distinct subdirectories (monorepos, multi-module projects, etc.): mention that subdirectory AGENTS.md files can be added for module-specific instructions (they're loaded automatically when the agent works in those directories). Offer to create them if the user wants.
 
